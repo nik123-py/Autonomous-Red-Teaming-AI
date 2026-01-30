@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  # OWASP Juice Shop - Vulnerable Web Application
+  juice-shop:
+    image: bkimminich/juice-shop:latest
+    container_name: art-ai-juice-shop
+    ports:
+      - "3001:3000"
+    environment:
+      - NODE_ENV=production
+    networks:
+      - art-ai-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # DVWA - Damn Vulnerable Web Application
+  dvwa:
+    image: vulnerables/web-dvwa:latest
+    container_name: art-ai-dvwa
+    ports:
+      - "3002:80"
+    environment:
+      - MYSQL_ROOT_PASSWORD=p@ssw0rd
+      - MYSQL_DATABASE=dvwa
+      - MYSQL_USER=dvwa
+      - MYSQL_PASSWORD=p@ssw0rd
+    networks:
+      - art-ai-network
+    restart: unless-stopped
+
+  # Vulnerable API Server (Simple Flask app)
+  vulnerable-api:
+    build:
+      context: ./vulnerable-api
+      dockerfile: Dockerfile
+    container_name: art-ai-vulnerable-api
+    ports:
+      - "3003:5000"
+    networks:
+      - art-ai-network
+    restart: unless-stopped
+    environment:
+      - FLASK_ENV=development
+
+networks:
+  art-ai-network:
+    driver: bridge
+

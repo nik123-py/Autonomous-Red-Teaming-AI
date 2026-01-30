@@ -1,0 +1,74 @@
+.attack-path-viz {
+  background: rgba(20, 25, 45, 0.8);
+  border-radius: 12px;
+  padding: 2rem;
+  border: 1px solid #2a3f5f;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.attack-path-viz h3 {
+  color: #00d4ff;
+  margin-bottom: 1.5rem;
+  font-size: 1.3rem;
+}
+
+.flow-container {
+  height: 500px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  border: 1px solid #2a3f5f;
+}
+
+.node-content {
+  padding: 0.5rem;
+  text-align: center;
+  font-size: 0.85rem;
+}
+
+.node-action {
+  font-weight: bold;
+  margin-bottom: 0.25rem;
+  text-transform: capitalize;
+}
+
+.node-status {
+  font-size: 0.75rem;
+  margin-bottom: 0.25rem;
+}
+
+.node-level {
+  font-size: 0.7rem;
+  opacity: 0.9;
+  margin-bottom: 0.25rem;
+}
+
+.node-component {
+  font-size: 0.65rem;
+  opacity: 0.8;
+  font-style: italic;
+}
+
+.path-legend {
+  display: flex;
+  gap: 2rem;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #2a3f5f;
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #a0a0a0;
+  font-size: 0.9rem;
+}
+
+.legend-color {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  border: 1px solid #2a3f5f;
+}
+
