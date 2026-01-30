@@ -4,6 +4,30 @@ Use this document to build your presentation. Copy the mermaid diagrams into [me
 
 ---
 
+## Judging criteria: how this deck scores
+
+| Criterion | Where it is covered | What to show / say |
+|-----------|--------------------|--------------------|
+| **Previous report** | Slide: Previous report and progress | What was built, milestones, prior work (MVP scope, features delivered). |
+| **Stats** | Slide: Stats and metrics | Numbers: 10+ attack types, 10 exploit types, 7+ tools, 4 access levels, 20+ API endpoints, etc. |
+| **Goals** | Slide: Goals | Short-term (demo, feedback, integration) and long-term (scale, enterprise, AI improvements). |
+| **How you pitch it** | Delivery notes below | Clear opening, one-liner, confident close; use the suggested flow and key phrases. |
+| **Technical relevance** | Slide: Technical relevance | Why it matters now: talent gap, continuous security, AI in offense, CVE overload; link to real workflows. |
+| **Diagram** | Slides 7, 8, 10 | Three diagrams: high-level architecture (Slide 7), data-flow sequence (Slide 8), uniqueness flowchart (Slide 10). Export from mermaid.live and use as primary visuals. |
+
+---
+
+## How you pitch it (for judging: delivery)
+
+- **Opening (first 30 sec):** State the problem in one line: "Red teaming is manual, one-off, and expertise-heavy." Then: "ART-AI is a platform that automates continuous red teaming and assists pentesters with an in-tool AI."
+- **One-liner (repeat on solution and close):** "ART-AI is the only platform that combines knowledge-augmented RL, autonomous attack scheduling, an in-tool pentest AI assistant, and a full toolkit—network scanner, vulnerability scanner, exploit generator, code analysis, and attack history."
+- **When showing diagrams:** Name the three explicitly—"High-level architecture," "Data flow from target to attack path," "What makes ART-AI unique"—so judges see technical depth and structure.
+- **Technical relevance:** When on that slide, tie each bullet to a judge concern: talent gap, continuous security, AI in offense, CVE overload. One sentence each.
+- **Confident close:** End with: "We have built an MVP that runs today. We are ready for the next round and would like to show a live demo."
+- **Pacing:** Problem (short) -> Previous report + Stats + Goals (proof and numbers) -> Solution + Architecture + How it works (diagrams) -> Technical relevance + Uniqueness (why it matters) -> Use cases + Why boom + Feasibility -> Summary and ask.
+
+---
+
 ## Part 1: System Architecture Design
 
 ### High-level architecture (for Slide: System Architecture)
@@ -158,10 +182,46 @@ flowchart LR
 
 ---
 
-### Slide 3: Our solution (one platform)
+### Slide 3: Previous report and progress (for judging: previous report)
+
+- **Headline:** What we have built so far.
+- **Bullets:**
+  - **MVP scope:** Full-stack ART-AI: FastAPI backend, React/Vite frontend, Q-learning RL agent, Exploit-DB integration.
+  - **Delivered:** Network scanner, vulnerability scanner, exploit generator (10 types), code analysis (C/C++), autonomous scheduler (10–20 min cadence), pentest AI assistant (chat + exploit help), attack history and path visualization.
+  - **Lab:** Docker-based vulnerable environments (Juice Shop, DVWA, custom API) for safe demos.
+  - **Prior work:** Knowledge-augmented RL (hints from Exploit-DB), reward structure for following intel, strategic hint system; all integrated and running.
+- **Takeaway:** "Not a concept—a working MVP with all core features implemented and demo-ready."
+
+---
+
+### Slide 4: Stats and metrics (for judging: stats)
+
+- **Headline:** ART-AI by the numbers.
+- **Bullets (use as on-slide stats):**
+  - **10+ attack action types:** public access, auth bypass, SQLi, XSS, token reuse, session hijack, path traversal, command injection, privilege escalation, lateral movement.
+  - **10 exploit types generated:** SQL injection, XSS, command injection, path traversal, auth bypass, privilege escalation, SSRF, XXE, deserialization, template injection.
+  - **7+ pentester tools in one dashboard:** Network Scanner, Vulnerability Scanner, Exploit Generator, Code Analysis, Autonomous Scheduler, Pentest AI Assistant, Attack History.
+  - **4 access levels tracked:** None, Public, Internal, Admin (with escalation logic).
+  - **20+ REST API endpoints:** state, attack, simulate, scan, generate-exploit, analyze-code, chat, attack-paths, query-hints, reset, etc.
+  - **3 diagram types:** High-level architecture, data-flow sequence, uniqueness flowchart (all in deck).
+- **Takeaway:** "Concrete numbers: 10+ attack types, 10 exploit types, 7+ tools, 20+ APIs—built and working."
+
+---
+
+### Slide 5: Goals (for judging: goals)
+
+- **Headline:** Short-term and long-term goals.
+- **Bullets:**
+  - **Short-term:** Successfully demo ART-AI in the pitching round; get feedback from judges; integrate feedback (e.g. more exploit types or scan options); document and open-source where appropriate.
+  - **Long-term:** Scale to enterprise (multi-target scheduling, team roles, reporting); deepen AI (better RL policies, richer Exploit-DB use, assistant tied to scan context); align with compliance (evidence and repeatability for auditors); grow community and contributions.
+- **Takeaway:** "Clear path: demo and feedback now; scale, enterprise features, and deeper AI next."
+
+---
+
+### Slide 6: Our solution (one platform)
 
 - **Headline:** ART-AI: one platform for autonomous red teaming and pentester assistance.
-- **Visual:** Use the high-level architecture diagram (User / Frontend / Backend / Target).
+- **Visual:** Use the **high-level architecture diagram** (User / Frontend / Backend / Target) — primary diagram for judging.
 - **Bullets:**
   - **Network Scanner:** Port and service discovery for reconnaissance.
   - **Vulnerability Scanner:** Detect vulns and weak spots on targets.
@@ -174,7 +234,7 @@ flowchart LR
 
 ---
 
-### Slide 4: System architecture (technical credibility)
+### Slide 7: System architecture (technical credibility + diagram)
 
 - **Headline:** System architecture.
 - **Visual:** Use the high-level architecture diagram from Part 1.
@@ -186,10 +246,10 @@ flowchart LR
 
 ---
 
-### Slide 5: How it works (data flow)
+### Slide 8: How it works (data flow + diagram)
 
 - **Headline:** From target to attack path: autonomous loop.
-- **Visual:** Use the sequence diagram (Scheduler -> API -> Recon -> VulnScan -> Exploit-DB -> RL -> Storage).
+- **Visual:** Use the **sequence diagram** (Scheduler -> API -> Recon -> VulnScan -> Exploit-DB -> RL -> Storage) — second diagram for judging.
 - **Bullets:**
   - User sets target and starts autonomous mode once.
   - Each cycle: scan, vuln check, Exploit-DB hints, RL simulation, save path, schedule next run.
@@ -198,10 +258,23 @@ flowchart LR
 
 ---
 
-### Slide 6: What makes ART-AI unique (differentiation)
+### Slide 9: Technical relevance (for judging: technical relevance)
+
+- **Headline:** Why ART-AI is technically relevant today.
+- **Bullets:**
+  - **Talent gap:** Automation and AI-assisted tools multiply analyst output; ART-AI reduces dependency on scarce red team expertise.
+  - **Continuous security:** DevSecOps expects ongoing testing; our scheduler (10–20 min cadence) fits continuous red teaming.
+  - **AI in offensive security:** RL for decision-making + LLM for assistance aligns with industry direction; we combine both in one platform.
+  - **CVE and exploit overload:** Exploit-DB-style intel in the loop turns public knowledge into prioritized actions; directly relevant for real engagements.
+  - **Safe and repeatable:** Sandboxed simulations and stored attack paths support training, compliance, and evidence for auditors.
+- **Takeaway:** "Technically relevant: addresses talent shortage, continuous testing, AI-native security, and CVE prioritization."
+
+---
+
+### Slide 10: What makes ART-AI unique (differentiation + diagram)
 
 - **Headline:** What makes ART-AI unique.
-- **Visual:** Use the "Unique Combination" flowchart (RL + Scheduler + AI Assistant + Full Pentester Toolkit -> Value).
+- **Visual:** Use the **"Unique Combination" flowchart** (RL + Scheduler + AI Assistant + Full Pentester Toolkit -> Value) — third diagram for judging.
 - **Bullets:**
   - **Knowledge-augmented RL:** Exploit-DB/CVE intel guides the agent; it learns to trust and follow hints.
   - **Autonomous Scheduler:** 10-20 minute cadence for overnight or multi-day testing.
@@ -211,7 +284,7 @@ flowchart LR
 
 ---
 
-### Slide 7: Real-life use cases (why it is useful today)
+### Slide 11: Real-life use cases (why it is useful today)
 
 - **Headline:** Real-life use cases.
 - **Bullets:**
@@ -223,7 +296,7 @@ flowchart LR
 
 ---
 
-### Slide 8: Why it will boom in the upcoming years (future growth)
+### Slide 12: Why it will boom in the upcoming years (future growth)
 
 - **Headline:** Why ART-AI will grow in the next 3-5 years.
 - **Bullets:**
@@ -236,7 +309,7 @@ flowchart LR
 
 ---
 
-### Slide 9: Feasibility and demo (why we can deliver)
+### Slide 13: Feasibility and demo (why we can deliver)
 
 - **Headline:** Built and demo-ready.
 - **Bullets:**
@@ -248,7 +321,7 @@ flowchart LR
 
 ---
 
-### Slide 10: Summary and ask (close)
+### Slide 14: Summary and ask (close)
 
 - **Headline:** ART-AI in one sentence.
 - **One-liner:** "ART-AI is the only platform that combines knowledge-augmented RL, autonomous attack scheduling, an in-tool pentest AI assistant, and a full toolkit—network scanner, vulnerability scanner, exploit generator, code analysis, and attack history."
@@ -263,14 +336,18 @@ flowchart LR
 |-------|----------------|--------|
 | 1 | Title only | Logo if available |
 | 2 | Problem bullets | Icon for "shortage / one-off / stuck" |
-| 3 | High-level architecture diagram | Bullets only |
-| 4 | Same architecture diagram | Component list |
-| 5 | Sequence diagram (data flow) | Simple flowchart |
-| 6 | Uniqueness flowchart (four pillars) | Four icons + bullets |
-| 7 | Use-case bullets | Simple scenario sketches |
-| 8 | "Why boom" bullets | Trend arrows or timeline |
-| 9 | "Built" bullets + optional screenshot | Demo screenshot |
-| 10 | One-liner + three bullets | Contact / next step |
+| 3 | Previous report and progress bullets | Milestones / MVP scope |
+| 4 | Stats and metrics (numbers) | Bullets as on-slide stats |
+| 5 | Goals (short- and long-term) bullets | Timeline or two columns |
+| 6 | High-level architecture diagram | Bullets only |
+| 7 | Same architecture diagram | Component list |
+| 8 | Sequence diagram (data flow) | Simple flowchart |
+| 9 | Technical relevance bullets | Icons: talent, continuous, AI, CVE |
+| 10 | Uniqueness flowchart (four pillars) | Four icons + bullets |
+| 11 | Use-case bullets | Simple scenario sketches |
+| 12 | "Why boom" bullets | Trend arrows or timeline |
+| 13 | "Built" bullets + optional screenshot | Demo screenshot |
+| 14 | One-liner + three bullets | Contact / next step |
 
 ---
 
