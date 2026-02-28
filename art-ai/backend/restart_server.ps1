@@ -3,7 +3,7 @@ Write-Host "=== Restarting ART-AI Backend Server ===" -ForegroundColor Cyan
 
 # Kill existing server
 $processes = Get-Process | Where-Object {$_.ProcessName -like "*python*"} | Where-Object {
-    $_.Path -like "*venv*" -or (Get-NetTCPConnection -LocalPort 8000 -ErrorAction SilentlyContinue).OwningProcess -eq $_.Id
+    $_.Path -like "*venv*" -or (Get-NetTCPConnection -LocalPort 8003 -ErrorAction SilentlyContinue).OwningProcess -eq $_.Id
 }
 if ($processes) {
     Write-Host "Stopping existing server processes..." -ForegroundColor Yellow

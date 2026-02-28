@@ -11,6 +11,9 @@ import {
   AttackHistoryIcon,
   ScheduleIcon,
   ChatIcon,
+  RLAgentIcon,
+  ShieldIcon,
+  DocumentIcon,
   MenuIcon,
   CloseIcon
 } from './Icons'
@@ -48,8 +51,10 @@ function Navbar() {
       items: [
         { path: '/', Icon: DashboardIcon, label: 'Dashboard' },
         { path: '/simulation', Icon: AISimulationIcon, label: 'AI Simulation' },
+        { path: '/rl-agent', Icon: RLAgentIcon, label: 'RL Agent Performance' },
         { path: '/autonomous', Icon: ScheduleIcon, label: 'Autonomous Scheduler' },
         { path: '/pentest-chat', Icon: ChatIcon, label: 'Pentest AI Assistant' },
+        { path: '/quantumdefender', Icon: ChatIcon, label: 'QuantumDefender Automation' },
       ]
     },
     {
@@ -62,8 +67,10 @@ function Navbar() {
       ]
     },
     {
-      section: 'History',
+      section: 'Reports & Compliance',
       items: [
+        { path: '/compliance', Icon: ShieldIcon, label: 'Compliance Dashboard' },
+        { path: '/reports', Icon: DocumentIcon, label: 'Report Generation' },
         { path: '/attack-history', Icon: AttackHistoryIcon, label: 'Attack Paths' },
       ]
     }

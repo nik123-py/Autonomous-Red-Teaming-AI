@@ -10,7 +10,11 @@ import {
   CodeAnalysisPage,
   AttackHistoryPage,
   AutonomousSchedulerPage,
-  PentestChatPage
+  PentestChatPage,
+  RLAgentPage,
+  ComplianceDashboardPage,
+  ReportGenerationPage,
+  QuantumDefenderPage
 } from './pages'
 import './pages/Pages.css'
 import './App.css'
@@ -31,6 +35,10 @@ function App() {
             <Route path="/attack-history" element={<AttackHistoryPage />} />
             <Route path="/autonomous" element={<AutonomousSchedulerPage />} />
             <Route path="/pentest-chat" element={<PentestChatPage />} />
+            <Route path="/quantumdefender" element={<QuantumDefenderPage />} />
+            <Route path="/rl-agent" element={<RLAgentPage />} />
+            <Route path="/compliance" element={<ComplianceDashboardPage />} />
+            <Route path="/reports" element={<ReportGenerationPage />} />
           </Routes>
         </main>
       </div>

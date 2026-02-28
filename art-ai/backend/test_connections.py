@@ -6,7 +6,7 @@ Run this to verify all endpoints are working correctly.
 import requests
 import json
 
-BASE_URL = "http://localhost:8000/api"
+BASE_URL = "http://localhost:8003/api"
 
 def test_exploit_generation():
     """Test exploit generation endpoint"""

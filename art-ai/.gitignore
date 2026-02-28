@@ -14,6 +14,17 @@ build/
 *.sqlite
 *.sqlite3
 
+# Large binary / model files (too large for GitHub)
+*.pkl
+*.pt
+*.pth
+*.bin
+*.h5
+backend/data_cache/
+backend/models/*.pkl
+backend/models/*.pt
+backend/models/*.pth
+
 # Node
 node_modules/
 npm-debug.log*
