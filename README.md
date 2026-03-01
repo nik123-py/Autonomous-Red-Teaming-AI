@@ -370,6 +370,6 @@ Educational use only. See LICENSE file for details.
 ---
 
 <p align="center">
-  <strong>Built with 🔥 for the THREX Hackathon</strong><br>
+  <strong>Built with 🔥 for the AMD Hackathon</strong><br>
   <em>ART-AI — Autonomous. Intelligent. Continuous.</em>
 </p>
