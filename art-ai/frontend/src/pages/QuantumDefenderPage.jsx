@@ -199,8 +199,8 @@ function QuantumDefenderPage() {
                     <span className="qd-hud-label">STATUS</span>
                     <span className="qd-hud-status">
                         <span className="qd-status-dot" style={{
-                            background: isConnected ? '#00ff88' : '#ff4444',
-                            boxShadow: `0 0 6px ${isConnected ? '#00ff88' : '#ff4444'}`,
+                            background: isConnected ? '#22c55e' : '#ff4444',
+                            boxShadow: `0 0 6px ${isConnected ? '#22c55e' : '#ff4444'}`,
                         }} />
                         {isConnected ? 'CONNECTED' : 'DISCONNECTED'}
                     </span>
@@ -210,7 +210,7 @@ function QuantumDefenderPage() {
             {/* Header */}
             <div className="page-header" style={{ marginBottom: '1rem' }}>
                 <h1 className="page-title" style={{ marginBottom: '0.25rem' }}>
-                    <span className="page-title-icon" style={{ color: '#00d4ff' }}>{icons.terminal}</span>
+                    <span className="page-title-icon" style={{ color: '#ef4444' }}>{icons.terminal}</span>
                     Kali Linux Instance
                 </h1>
                 <p className="page-subtitle" style={{ maxWidth: 520 }}>
@@ -276,7 +276,7 @@ function QuantumDefenderPage() {
             {showSetup && (
                 <div className="card animate-fade-in" style={{ marginBottom: '1rem', padding: '1rem 1.25rem' }}>
                     <h2 className="card-title" style={{ marginBottom: '0.75rem' }}>
-                        <span style={{ color: '#00d4ff', display: 'flex', alignItems: 'center' }}>{icons.docker}</span>
+                        <span style={{ color: '#ef4444', display: 'flex', alignItems: 'center' }}>{icons.docker}</span>
                         Docker Setup Guide
                     </h2>
                     <p style={{ color: '#9ca3af', fontSize: '0.82rem', marginBottom: '1rem' }}>
@@ -331,7 +331,7 @@ function QuantumDefenderPage() {
                         <p className="qd-empty-title">Kali Linux Desktop</p>
                         <p className="qd-empty-subtitle" style={{ maxWidth: 520 }}>
                             Start a Kali Linux Docker container with noVNC, then enter the URL above and click{' '}
-                            <strong style={{ color: '#00d4ff' }}>Connect</strong> to launch a full desktop environment.
+                            <strong style={{ color: '#ef4444' }}>Connect</strong> to launch a full desktop environment.
                         </p>
                         <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem', marginTop: '1rem' }}>
                             <button type="button" className="btn qd-btn-send" onClick={() => setShowSetup(true)}>
@@ -347,8 +347,8 @@ function QuantumDefenderPage() {
 
             {/* Info footer */}
             <div className="card animate-fade-in" style={{ marginTop: '1rem', padding: '1rem', fontSize: '0.8rem', color: '#6b7280' }}>
-                <span style={{ color: '#00d4ff', marginRight: 6, display: 'inline-flex', verticalAlign: 'middle' }}>{icons.info}</span>
-                <strong style={{ color: '#00d4ff' }}>[Kali Instance]</strong>{' '}
+                <span style={{ color: '#ef4444', marginRight: 6, display: 'inline-flex', verticalAlign: 'middle' }}>{icons.info}</span>
+                <strong style={{ color: '#ef4444' }}>[Kali Instance]</strong>{' '}
                 This page embeds a Kali Linux desktop running in Docker via noVNC. All pentesting tools (Nmap, Metasploit, Burp Suite, etc.)
                 are available directly in the browser. Your session persists as long as the Docker container is running.
             </div>
@@ -357,3 +357,4 @@ function QuantumDefenderPage() {
 }
 
 export default QuantumDefenderPage
+

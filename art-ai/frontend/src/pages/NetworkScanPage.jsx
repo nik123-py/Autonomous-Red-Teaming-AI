@@ -99,11 +99,11 @@ function NetworkScanPage() {
                                 <div key={idx} className="result-item">
                                     <div className="result-item-header">
                                         <span className="result-item-title">
-                                            <span style={{ color: '#00d4ff', fontWeight: 'bold', fontSize: '1.1rem' }}>
+                                            <span style={{ color: '#ef4444', fontWeight: 'bold', fontSize: '1.1rem' }}>
                                                 {port.port}
                                             </span>
                                             <span style={{ color: '#6b7280', margin: '0 0.5rem' }}>/</span>
-                                            <span style={{ color: '#00ff88' }}>{port.protocol || 'TCP'}</span>
+                                            <span style={{ color: '#22c55e' }}>{port.protocol || 'TCP'}</span>
                                         </span>
                                         <span className="badge badge-info">{port.state || 'OPEN'}</span>
                                     </div>
@@ -130,7 +130,7 @@ function NetworkScanPage() {
                                 {scanResults.services.map((service, idx) => (
                                     <div key={idx} className="result-item">
                                         <div className="result-item-header">
-                                            <span className="result-item-title" style={{ color: '#00d4ff' }}>
+                                            <span className="result-item-title" style={{ color: '#ef4444' }}>
                                                 {service.name}
                                             </span>
                                             <span className="badge badge-info">Port {service.port}</span>
@@ -155,3 +155,4 @@ function NetworkScanPage() {
 }
 
 export default NetworkScanPage
+

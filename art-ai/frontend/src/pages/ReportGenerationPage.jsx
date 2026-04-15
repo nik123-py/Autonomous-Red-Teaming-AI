@@ -18,7 +18,7 @@ const RISK_COLORS = {
     'Critical': '#ff4444',
     'High': '#ff8800',
     'Medium': '#ffaa00',
-    'Low': '#00ff88'
+    'Low': '#22c55e'
 };
 
 export default function ReportGenerationPage() {
@@ -115,7 +115,7 @@ export default function ReportGenerationPage() {
             <div className="page-header">
                 <h1 className="page-title">
                     <span className="page-title-icon">
-                        <DocumentIcon size={28} color="#00d4ff" />
+                        <DocumentIcon size={28} color="#ef4444" />
                     </span>
                     Report Generation
                 </h1>
@@ -187,8 +187,8 @@ export default function ReportGenerationPage() {
                                 width: '20px',
                                 height: '20px',
                                 borderRadius: '4px',
-                                background: config.includeCompliance ? '#00d4ff' : 'transparent',
-                                border: `2px solid ${config.includeCompliance ? '#00d4ff' : '#6b7280'}`,
+                                background: config.includeCompliance ? '#ef4444' : 'transparent',
+                                border: `2px solid ${config.includeCompliance ? '#ef4444' : '#6b7280'}`,
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center'
@@ -197,7 +197,7 @@ export default function ReportGenerationPage() {
                                     <span style={{ color: '#0a0e27', fontSize: '14px', fontWeight: 'bold' }}>✓</span>
                                 )}
                             </div>
-                            <span style={{ color: config.includeCompliance ? '#00d4ff' : '#9ca3af' }}>
+                            <span style={{ color: config.includeCompliance ? '#ef4444' : '#9ca3af' }}>
                                 Map findings to compliance frameworks
                             </span>
                         </div>
@@ -221,7 +221,7 @@ export default function ReportGenerationPage() {
                                         border: `1px solid ${config.frameworks.includes(framework) ? 'rgba(0,212,255,0.4)' : 'rgba(255,255,255,0.1)'}`,
                                         borderRadius: '20px',
                                         cursor: 'pointer',
-                                        color: config.frameworks.includes(framework) ? '#00d4ff' : '#9ca3af',
+                                        color: config.frameworks.includes(framework) ? '#ef4444' : '#9ca3af',
                                         fontSize: '0.85rem',
                                         fontWeight: 500
                                     }}
@@ -256,7 +256,7 @@ export default function ReportGenerationPage() {
                         <div className="stat-card">
                             <div 
                                 className="stat-value" 
-                                style={{ color: RISK_COLORS[reportData.risk_metrics?.risk_level] || '#00d4ff' }}
+                                style={{ color: RISK_COLORS[reportData.risk_metrics?.risk_level] || '#ef4444' }}
                             >
                                 {reportData.risk_metrics?.overall_risk_score || 0}
                             </div>
@@ -265,7 +265,7 @@ export default function ReportGenerationPage() {
                         <div className="stat-card">
                             <div 
                                 className="stat-value" 
-                                style={{ color: RISK_COLORS[reportData.risk_metrics?.risk_level] || '#00d4ff' }}
+                                style={{ color: RISK_COLORS[reportData.risk_metrics?.risk_level] || '#ef4444' }}
                             >
                                 {reportData.risk_metrics?.risk_level || 'N/A'}
                             </div>
@@ -279,7 +279,7 @@ export default function ReportGenerationPage() {
                         </div>
                         <div className="stat-card">
                             <div className="stat-value" style={{ 
-                                color: reportData.risk_metrics?.access_level_achieved === 'admin' ? '#ff4444' : '#00ff88' 
+                                color: reportData.risk_metrics?.access_level_achieved === 'admin' ? '#ff4444' : '#22c55e' 
                             }}>
                                 {reportData.risk_metrics?.access_level_achieved?.toUpperCase() || 'NONE'}
                             </div>
@@ -319,7 +319,7 @@ export default function ReportGenerationPage() {
                     {previewMode === 'json' && (
                         <div className="card">
                             <h3 className="card-title" style={{ marginBottom: '1rem' }}>
-                                <ChartIcon size={20} color="#00d4ff" /> Executive Summary
+                                <ChartIcon size={20} color="#ef4444" /> Executive Summary
                             </h3>
                             <div style={{
                                 padding: '1rem',
@@ -351,7 +351,7 @@ export default function ReportGenerationPage() {
                                                 <div style={{ 
                                                     fontSize: '1.5rem', 
                                                     fontWeight: 'bold',
-                                                    color: score.score >= 80 ? '#00ff88' : score.score >= 60 ? '#ffaa00' : '#ff4444'
+                                                    color: score.score >= 80 ? '#22c55e' : score.score >= 60 ? '#ffaa00' : '#ff4444'
                                                 }}>
                                                     {score.score.toFixed(1)}%
                                                 </div>
@@ -409,7 +409,7 @@ export default function ReportGenerationPage() {
                                                 <span style={{
                                                     padding: '0.25rem 0.5rem',
                                                     background: 'rgba(0,212,255,0.15)',
-                                                    color: '#00d4ff',
+                                                    color: '#ef4444',
                                                     borderRadius: '4px',
                                                     fontSize: '0.75rem'
                                                 }}>
@@ -461,7 +461,7 @@ export default function ReportGenerationPage() {
                                                 <span style={{
                                                     padding: '0.25rem 0.75rem',
                                                     background: 'rgba(0,212,255,0.15)',
-                                                    color: '#00d4ff',
+                                                    color: '#ef4444',
                                                     borderRadius: '20px',
                                                     fontSize: '0.75rem'
                                                 }}>
@@ -480,7 +480,7 @@ export default function ReportGenerationPage() {
                                         </div>
                                         <div style={{ 
                                             fontSize: '0.9rem', 
-                                            color: '#00ff88', 
+                                            color: '#22c55e', 
                                             marginBottom: '0.5rem',
                                             fontWeight: 500
                                         }}>
@@ -518,3 +518,4 @@ export default function ReportGenerationPage() {
         </div>
     );
 }
+

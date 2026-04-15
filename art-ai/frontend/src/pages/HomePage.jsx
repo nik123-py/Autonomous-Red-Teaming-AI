@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import axios from 'axios'
+import { useTier, ROUTE_TIER_MAP } from '../components/TierContext'
 import { 
   DashboardIcon, 
   AISimulationIcon, 
@@ -21,6 +22,7 @@ const API_BASE = 'http://localhost:8003/api'
 function HomePage() {
     const [currentState, setCurrentState] = useState(null)
     const [loading, setLoading] = useState(true)
+    const { hasAccess } = useTier()
 
     useEffect(() => {
         fetchState()
@@ -38,10 +40,10 @@ function HomePage() {
     }
 
     const accessLevelColors = {
-        none: '#ff4444',
-        public: '#ffaa00',
-        internal: '#00aaff',
-        admin: '#00ff88'
+        none: '#ef4444',
+        public: '#f59e0b',
+        internal: '#3b82f6',
+        admin: '#22c55e'
     }
 
     const quickActions = [
@@ -95,6 +97,12 @@ function HomePage() {
         }
     ]
 
+    // Filter actions by the user's tier
+    const filteredActions = quickActions.filter(action => {
+        const minTier = ROUTE_TIER_MAP[action.path]
+        return !minTier || hasAccess(minTier)
+    })
+
     if (loading) {
         return (
             <div className="page">
@@ -111,7 +119,7 @@ function HomePage() {
             <div className="page-header">
                 <h1 className="page-title">
                     <span className="page-title-icon">
-                        <DashboardIcon size={32} color="#00d4ff" />
+                        <DashboardIcon size={32} color="#ef4444" />
                     </span>
                     Dashboard
                 </h1>
@@ -124,7 +132,7 @@ function HomePage() {
                     <div className="card-header">
                         <h2 className="card-title">
                             <span className="card-title-icon">
-                                <ChartIcon size={24} color="#00d4ff" />
+                                <ChartIcon size={24} color="#ef4444" />
                             </span>
                             Current Environment State
                         </h2>
@@ -141,7 +149,7 @@ function HomePage() {
 
                     <div className="grid-4">
                         <div className="stat-card">
-                            <div className="stat-value" style={{ color: accessLevelColors[currentState.current_access_level] }}>
+                            <div className="stat-value" style={{ color: accessLevelColors[currentState.current_access_level] || '#ef4444' }}>
                                 {currentState.current_access_level.toUpperCase()}
                             </div>
                             <div className="stat-label">Access Level</div>
@@ -164,16 +172,16 @@ function HomePage() {
                         <div style={{
                             marginTop: '1.5rem',
                             padding: '1rem',
-                            background: 'rgba(0, 212, 255, 0.1)',
+                            background: 'rgba(239, 68, 68, 0.08)',
                             borderRadius: '8px',
-                            border: '1px solid rgba(0, 212, 255, 0.2)'
+                            border: '1px solid rgba(239, 68, 68, 0.15)'
                         }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                                <LightbulbIcon size={20} color="#00d4ff" />
-                                <strong style={{ color: '#00d4ff' }}>Strategic Hint Available</strong>
+                                <LightbulbIcon size={20} color="#ef4444" />
+                                <strong style={{ color: '#ef4444' }}>Strategic Hint Available</strong>
                             </div>
-                            <p style={{ color: '#9ca3af', margin: 0 }}>
-                                Suggested Action: <span style={{ color: '#00ff88' }}>{currentState.strategic_hint?.replace(/_/g, ' ').toUpperCase()}</span>
+                            <p style={{ color: '#94a3b8', margin: 0 }}>
+                                Suggested Action: <span style={{ color: '#22c55e' }}>{currentState.strategic_hint?.replace(/_/g, ' ').toUpperCase()}</span>
                                 {' '}({(currentState.hint_confidence * 100).toFixed(0)}% confidence)
                             </p>
                         </div>
@@ -186,7 +194,7 @@ function HomePage() {
                 Quick Actions
             </h2>
             <div className="grid-3">
-                {quickActions.map((action, idx) => {
+                {filteredActions.map((action, idx) => {
                     const IconComponent = action.Icon
                     return (
                         <Link
@@ -196,7 +204,7 @@ function HomePage() {
                             style={{ animationDelay: `${idx * 0.05}s` }}
                         >
                             <div className="action-card-icon">
-                                <IconComponent size={32} color="#00d4ff" />
+                                <IconComponent size={32} color="#ef4444" />
                             </div>
                             <div className="action-card-title">{action.title}</div>
                             <div className="action-card-desc">{action.desc}</div>

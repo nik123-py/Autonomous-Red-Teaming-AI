@@ -39,7 +39,7 @@ function AttackPathVisualization({ attackPath, finalAccessLevel }) {
       // Determine node color based on success and access level
       let nodeColor = '#666'
       if (isSuccess) {
-        if (newLevel === 'admin') nodeColor = '#00ff88'
+        if (newLevel === 'admin') nodeColor = '#22c55e'
         else if (newLevel === 'internal') nodeColor = '#00aaff'
         else if (newLevel === 'public') nodeColor = '#ffaa00'
         else nodeColor = '#ff4444'
@@ -70,7 +70,7 @@ function AttackPathVisualization({ attackPath, finalAccessLevel }) {
         style: {
           background: nodeColor,
           color: '#fff',
-          border: isSuccess ? '2px solid #00ff88' : '2px solid #666',
+          border: isSuccess ? '2px solid #22c55e' : '2px solid #666',
           minWidth: 180
         }
       })
@@ -83,7 +83,7 @@ function AttackPathVisualization({ attackPath, finalAccessLevel }) {
         target: stepId,
         animated: isSuccess,
         style: {
-          stroke: isSuccess ? '#00ff88' : '#666',
+          stroke: isSuccess ? '#22c55e' : '#666',
           strokeWidth: isSuccess ? 2 : 1
         },
         label: `R: ${step.reward?.toFixed(1) || 0}`
@@ -100,9 +100,9 @@ function AttackPathVisualization({ attackPath, finalAccessLevel }) {
       data: { label: `End\n(${finalAccessLevel} Access)` },
       position: { x: xPosition, y: levelYPositions[finalAccessLevel] || 200 },
       style: {
-        background: finalAccessLevel === 'admin' ? '#00ff88' : '#00aaff',
+        background: finalAccessLevel === 'admin' ? '#22c55e' : '#00aaff',
         color: '#fff',
-        border: '2px solid #00ff88'
+        border: '2px solid #22c55e'
       }
     })
 
@@ -112,7 +112,7 @@ function AttackPathVisualization({ attackPath, finalAccessLevel }) {
         source: `step-${attackPath.length - 1}`,
         target: 'end',
         animated: true,
-        style: { stroke: '#00ff88', strokeWidth: 2 }
+        style: { stroke: '#22c55e', strokeWidth: 2 }
       })
     }
 
@@ -140,7 +140,7 @@ function AttackPathVisualization({ attackPath, finalAccessLevel }) {
       </div>
       <div className="path-legend">
         <div className="legend-item">
-          <span className="legend-color" style={{ background: '#00ff88' }}></span>
+          <span className="legend-color" style={{ background: '#22c55e' }}></span>
           <span>Successful Attack</span>
         </div>
         <div className="legend-item">
@@ -161,4 +161,5 @@ function AttackPathVisualization({ attackPath, finalAccessLevel }) {
 }
 
 export default AttackPathVisualization
+
 

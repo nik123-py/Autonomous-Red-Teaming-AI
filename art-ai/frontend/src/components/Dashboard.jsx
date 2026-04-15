@@ -16,7 +16,7 @@ function Dashboard({
     none: '#ff4444',
     public: '#ffaa00',
     internal: '#00aaff',
-    admin: '#00ff88'
+    admin: '#22c55e'
   }
 
   const handleStartSimulation = () => {
@@ -169,4 +169,5 @@ function Dashboard({
 }
 
 export default Dashboard
+
 

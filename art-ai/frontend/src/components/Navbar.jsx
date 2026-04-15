@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { NavLink, useLocation } from 'react-router-dom'
+import { NavLink, useLocation, useNavigate } from 'react-router-dom'
 import axios from 'axios'
+import { useTier, ROUTE_TIER_MAP } from './TierContext'
 import { 
   DashboardIcon, 
   AISimulationIcon, 
@@ -25,6 +26,8 @@ function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
   const [backendStatus, setBackendStatus] = useState('checking')
   const location = useLocation()
+  const navigate = useNavigate()
+  const { hasAccess, clearTier, tier } = useTier()
 
   useEffect(() => {
     const checkBackend = async () => {
@@ -45,11 +48,11 @@ function Navbar() {
     setIsOpen(false)
   }, [location])
 
-  const navItems = [
+  const allNavItems = [
     {
       section: 'Main',
       items: [
-        { path: '/', Icon: DashboardIcon, label: 'Dashboard' },
+        { path: '/dashboard', Icon: DashboardIcon, label: 'Dashboard' },
         { path: '/simulation', Icon: AISimulationIcon, label: 'AI Simulation' },
         { path: '/rl-agent', Icon: RLAgentIcon, label: 'RL Agent Performance' },
         { path: '/autonomous', Icon: ScheduleIcon, label: 'Autonomous Scheduler' },
@@ -76,6 +79,20 @@ function Navbar() {
     }
   ]
 
+  // Filter nav items — only show links the user's tier can access
+  const navItems = allNavItems.map(section => ({
+    ...section,
+    items: section.items.filter(item => {
+      const minTier = ROUTE_TIER_MAP[item.path]
+      return !minTier || hasAccess(minTier)
+    })
+  })).filter(section => section.items.length > 0)
+
+  const handleReassess = () => {
+    clearTier()
+    navigate('/')
+  }
+
   return (
     <>
       <button 
@@ -83,7 +100,7 @@ function Navbar() {
         onClick={() => setIsOpen(!isOpen)}
         aria-label="Toggle navigation"
       >
-        {isOpen ? <CloseIcon size={20} color="#00d4ff" /> : <MenuIcon size={20} color="#00d4ff" />}
+        {isOpen ? <CloseIcon size={20} color="#ef4444" /> : <MenuIcon size={20} color="#ef4444" />}
       </button>
 
       <nav className={`nav-sidebar ${isOpen ? 'open' : ''}`}>
@@ -122,6 +139,15 @@ function Navbar() {
             <span className={`nav-status-dot ${backendStatus !== 'online' ? 'offline' : ''}`}></span>
             <span>Backend: {backendStatus === 'online' ? 'Connected' : backendStatus === 'offline' ? 'Offline' : 'Checking...'}</span>
           </div>
+          {tier && (
+            <button
+              className="nav-reassess-btn"
+              onClick={handleReassess}
+              title="Re-run security assessment"
+            >
+              ↻ Re-assess Plan
+            </button>
+          )}
         </div>
       </nav>
     </>
@@ -129,3 +155,4 @@ function Navbar() {
 }
 
 export default Navbar
+

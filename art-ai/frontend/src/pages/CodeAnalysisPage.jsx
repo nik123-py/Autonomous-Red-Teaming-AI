@@ -139,7 +139,7 @@ int main(int argc, char *argv[]) {
             critical: '#ff4444',
             high: '#ff8800',
             medium: '#ffaa00',
-            low: '#00ff88'
+            low: '#22c55e'
         }
         return colors[severity] || '#6b7280'
     }
@@ -339,7 +339,7 @@ int main(int argc, char *argv[]) {
                                             borderRadius: '6px',
                                             fontSize: '0.85rem'
                                         }}>
-                                            <strong style={{ color: '#00ff88' }}>✅ Remediation:</strong>
+                                            <strong style={{ color: '#22c55e' }}>✅ Remediation:</strong>
                                             <span style={{ color: '#9ca3af', marginLeft: '0.5rem' }}>{vuln.remediation}</span>
                                         </div>
                                     </div>
@@ -360,3 +360,4 @@ int main(int argc, char *argv[]) {
 }
 
 export default CodeAnalysisPage
+

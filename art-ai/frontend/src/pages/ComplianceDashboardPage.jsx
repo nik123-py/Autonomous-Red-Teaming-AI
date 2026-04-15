@@ -16,8 +16,8 @@ const API_BASE = 'http://localhost:8003';
 
 // Framework icons/colors
 const FRAMEWORK_CONFIG = {
-    'PCI-DSS': { color: '#00d4ff', icon: '💳', name: 'PCI-DSS' },
-    'HIPAA': { color: '#00ff88', icon: '🏥', name: 'HIPAA' },
+    'PCI-DSS': { color: '#ef4444', icon: '💳', name: 'PCI-DSS' },
+    'HIPAA': { color: '#22c55e', icon: '🏥', name: 'HIPAA' },
     'SOC2': { color: '#ff8800', icon: '🔒', name: 'SOC2' },
     'ISO27001': { color: '#ff4488', icon: '🌐', name: 'ISO27001' }
 };
@@ -27,7 +27,7 @@ const SEVERITY_COLORS = {
     'Critical': '#ff4444',
     'High': '#ff8800',
     'Medium': '#ffaa00',
-    'Low': '#00ff88'
+    'Low': '#22c55e'
 };
 
 export default function ComplianceDashboardPage() {
@@ -141,7 +141,7 @@ export default function ComplianceDashboardPage() {
 
     // Render compliance score gauge
     const renderScoreGauge = (score, framework) => {
-        const config = FRAMEWORK_CONFIG[framework] || { color: '#00d4ff', icon: '📋' };
+        const config = FRAMEWORK_CONFIG[framework] || { color: '#ef4444', icon: '📋' };
         const circumference = 2 * Math.PI * 45;
         const offset = circumference - (score / 100) * circumference;
 
@@ -202,7 +202,7 @@ export default function ComplianceDashboardPage() {
             <div className="page-header">
                 <h1 className="page-title">
                     <span className="page-title-icon">
-                        <ShieldIcon size={28} color="#00d4ff" />
+                        <ShieldIcon size={28} color="#ef4444" />
                     </span>
                     Compliance Dashboard
                 </h1>
@@ -322,7 +322,7 @@ export default function ComplianceDashboardPage() {
                             {/* Summary Stats */}
                             <div className="grid-4" style={{ marginBottom: '1.5rem' }}>
                                 <div className="stat-card">
-                                    <div className="stat-value" style={{ color: '#00d4ff' }}>
+                                    <div className="stat-value" style={{ color: '#ef4444' }}>
                                         {complianceResults.summary?.average_score?.toFixed(1) || 0}%
                                     </div>
                                     <div className="stat-label">Average Compliance</div>
@@ -340,7 +340,7 @@ export default function ComplianceDashboardPage() {
                                     <div className="stat-label">High Gaps</div>
                                 </div>
                                 <div className="stat-card">
-                                    <div className="stat-value" style={{ color: '#00ff88' }}>
+                                    <div className="stat-value" style={{ color: '#22c55e' }}>
                                         {complianceResults.summary?.frameworks_analyzed || 0}
                                     </div>
                                     <div className="stat-label">Frameworks Analyzed</div>
@@ -350,7 +350,7 @@ export default function ComplianceDashboardPage() {
                             {/* Framework Scores */}
                             <div className="grid-4">
                                 {complianceResults.scores?.map((score, idx) => {
-                                    const config = FRAMEWORK_CONFIG[score.framework] || { color: '#00d4ff', icon: '📋' };
+                                    const config = FRAMEWORK_CONFIG[score.framework] || { color: '#ef4444', icon: '📋' };
                                     return (
                                         <div key={idx} className="card" style={{ padding: '1.5rem' }}>
                                             <div style={{ 
@@ -376,7 +376,7 @@ export default function ComplianceDashboardPage() {
                                                 fontSize: '0.8rem',
                                                 color: '#9ca3af'
                                             }}>
-                                                <div>Compliant: <span style={{ color: '#00ff88' }}>{score.compliant}</span></div>
+                                                <div>Compliant: <span style={{ color: '#22c55e' }}>{score.compliant}</span></div>
                                                 <div>Non-Compliant: <span style={{ color: '#ff4444' }}>{score.non_compliant}</span></div>
                                                 <div>Critical: <span style={{ color: '#ff4444' }}>{score.critical_findings}</span></div>
                                                 <div>High: <span style={{ color: '#ff8800' }}>{score.high_findings}</span></div>
@@ -412,7 +412,7 @@ export default function ComplianceDashboardPage() {
                                                 </span>
                                                 <span style={{ 
                                                     fontWeight: 600, 
-                                                    color: FRAMEWORK_CONFIG[framework]?.color || '#00d4ff' 
+                                                    color: FRAMEWORK_CONFIG[framework]?.color || '#ef4444' 
                                                 }}>
                                                     {framework}
                                                 </span>
@@ -448,7 +448,7 @@ export default function ComplianceDashboardPage() {
                                                         padding: '0.5rem',
                                                         background: 'rgba(0,255,136,0.05)',
                                                         borderRadius: '4px',
-                                                        color: '#00ff88'
+                                                        color: '#22c55e'
                                                     }}>
                                                         <strong>Remediation:</strong> {finding.remediation}
                                                     </div>
@@ -465,7 +465,7 @@ export default function ComplianceDashboardPage() {
                     {activeTab === 'roadmap' && gapAnalysis && (
                         <div className="card">
                             <h3 className="card-title" style={{ marginBottom: '1.5rem' }}>
-                                <ChartIcon size={20} color="#00d4ff" /> Remediation Roadmap
+                                <ChartIcon size={20} color="#ef4444" /> Remediation Roadmap
                             </h3>
                             
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
@@ -476,7 +476,7 @@ export default function ComplianceDashboardPage() {
                                             padding: '1.5rem',
                                             background: 'rgba(0,0,0,0.2)',
                                             borderRadius: '12px',
-                                            borderLeft: `4px solid ${SEVERITY_COLORS[phase.priority] || '#00d4ff'}`
+                                            borderLeft: `4px solid ${SEVERITY_COLORS[phase.priority] || '#ef4444'}`
                                         }}
                                     >
                                         <div style={{ 
@@ -526,7 +526,7 @@ export default function ComplianceDashboardPage() {
                                                         fontSize: '0.8rem'
                                                     }}
                                                 >
-                                                    <span style={{ color: FRAMEWORK_CONFIG[item.framework]?.color || '#00d4ff' }}>
+                                                    <span style={{ color: FRAMEWORK_CONFIG[item.framework]?.color || '#ef4444' }}>
                                                         [{item.framework}]
                                                     </span>
                                                     {' '}{item.requirement_id}: {item.vulnerability}
@@ -548,3 +548,4 @@ export default function ComplianceDashboardPage() {
         </div>
     );
 }
+

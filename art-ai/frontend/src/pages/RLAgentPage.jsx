@@ -212,7 +212,7 @@ function RLAgentPage() {
                     </div>
                     <div className="grid-4">
                         <div className="stat-card">
-                            <div className="stat-value" style={{ color: '#00d4ff' }}>
+                            <div className="stat-value" style={{ color: '#ef4444' }}>
                                 {agentStats.epsilon.toFixed(3)}
                             </div>
                             <div className="stat-label">Epsilon (Exploration)</div>
@@ -221,7 +221,7 @@ function RLAgentPage() {
                             </div>
                         </div>
                         <div className="stat-card">
-                            <div className="stat-value" style={{ color: '#00ff88' }}>
+                            <div className="stat-value" style={{ color: '#22c55e' }}>
                                 {agentStats.learning_rate.toFixed(3)}
                             </div>
                             <div className="stat-label">Learning Rate</div>
@@ -239,7 +239,7 @@ function RLAgentPage() {
                             </div>
                         </div>
                         <div className="stat-card">
-                            <div className="stat-value" style={{ color: agentStats.success_rate > 0.5 ? '#00ff88' : '#ffaa00' }}>
+                            <div className="stat-value" style={{ color: agentStats.success_rate > 0.5 ? '#22c55e' : '#ffaa00' }}>
                                 {formatPercent(agentStats.success_rate)}
                             </div>
                             <div className="stat-label">Success Rate</div>
@@ -269,7 +269,7 @@ function RLAgentPage() {
                             <div className="stat-label">Total Steps</div>
                         </div>
                         <div className="stat-card">
-                            <div className="stat-value" style={{ color: '#00d4ff' }}>
+                            <div className="stat-value" style={{ color: '#ef4444' }}>
                                 {formatNumber(agentStats.q_table_size)}
                             </div>
                             <div className="stat-label">Q-Table Entries</div>
@@ -278,7 +278,7 @@ function RLAgentPage() {
                             </div>
                         </div>
                         <div className="stat-card">
-                            <div className="stat-value" style={{ color: '#00ff88' }}>
+                            <div className="stat-value" style={{ color: '#22c55e' }}>
                                 {formatNumber(agentStats.replay_buffer_size)}
                             </div>
                             <div className="stat-label">Replay Buffer</div>
@@ -292,7 +292,7 @@ function RLAgentPage() {
                             <div style={{ color: '#9ca3af', fontSize: '0.85rem', marginBottom: '0.5rem' }}>
                                 Total Rewards
                             </div>
-                            <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: agentStats.total_rewards >= 0 ? '#00ff88' : '#ff4444' }}>
+                            <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: agentStats.total_rewards >= 0 ? '#22c55e' : '#ff4444' }}>
                                 {agentStats.total_rewards.toFixed(2)}
                             </div>
                         </div>
@@ -300,7 +300,7 @@ function RLAgentPage() {
                             <div style={{ color: '#9ca3af', fontSize: '0.85rem', marginBottom: '0.5rem' }}>
                                 Average Reward
                             </div>
-                            <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: agentStats.average_reward >= 0 ? '#00ff88' : '#ff4444' }}>
+                            <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: agentStats.average_reward >= 0 ? '#22c55e' : '#ff4444' }}>
                                 {agentStats.average_reward.toFixed(2)}
                             </div>
                         </div>
@@ -429,7 +429,7 @@ function RLAgentPage() {
                         }}>
                             {Object.entries(qTableSample.sample).map(([state, actions]) => (
                                 <div key={state} style={{ marginBottom: '1rem', paddingBottom: '1rem', borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>
-                                    <div style={{ color: '#00d4ff', fontWeight: 'bold', marginBottom: '0.5rem' }}>
+                                    <div style={{ color: '#ef4444', fontWeight: 'bold', marginBottom: '0.5rem' }}>
                                         State: <span style={{ color: '#fff' }}>{state}</span>
                                     </div>
                                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '0.5rem' }}>
@@ -448,7 +448,7 @@ function RLAgentPage() {
                                                     {action.replace(/_/g, ' ')}
                                                 </div>
                                                 <div style={{ 
-                                                    color: qValue > 0 ? '#00ff88' : '#ff4444',
+                                                    color: qValue > 0 ? '#22c55e' : '#ff4444',
                                                     fontWeight: 'bold',
                                                     fontSize: '0.9rem'
                                                 }}>
@@ -473,3 +473,4 @@ function RLAgentPage() {
 }
 
 export default RLAgentPage
+

@@ -116,7 +116,7 @@ function AutonomousSchedulerPage() {
         none: '#ff4444',
         public: '#ffaa00',
         internal: '#00aaff',
-        admin: '#00ff88'
+        admin: '#22c55e'
     }
 
     return (
@@ -244,7 +244,7 @@ function AutonomousSchedulerPage() {
                     </div>
                     <div className="grid-4" style={{ marginBottom: '1rem' }}>
                         <div className="stat-card">
-                            <div className="stat-value" style={{ color: '#00ff88' }}>
+                            <div className="stat-value" style={{ color: '#22c55e' }}>
                                 {lastResult.successful_attacks}
                             </div>
                             <div className="stat-label">Successful</div>
@@ -304,3 +304,4 @@ function AutonomousSchedulerPage() {
 }
 
 export default AutonomousSchedulerPage
+

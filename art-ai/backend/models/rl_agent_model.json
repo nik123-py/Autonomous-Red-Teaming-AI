@@ -1,0 +1,26 @@
+{
+  "q_table": {},
+  "q_table_target": {},
+  "epsilon": 0.2,
+  "learning_rate": 0.15,
+  "episode_count": 0,
+  "statistics": {
+    "epsilon": 0.2,
+    "temperature": 1.0,
+    "learning_rate": 0.15,
+    "total_rewards": 0.0,
+    "episode_count": 0,
+    "step_count": 0,
+    "success_count": 0,
+    "failure_count": 0,
+    "success_rate": 0.0,
+    "average_reward": 0.0,
+    "q_table_size": 0,
+    "replay_buffer_size": 0,
+    "performance_trend": {
+      "recent_episodes": [],
+      "recent_rewards": [],
+      "recent_success_rates": []
+    }
+  }
+}

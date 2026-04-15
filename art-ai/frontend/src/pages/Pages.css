@@ -15,8 +15,8 @@
     right: 0;
     bottom: 0;
     background:
-        radial-gradient(circle at 20% 50%, rgba(0, 212, 255, 0.05) 0%, transparent 50%),
-        radial-gradient(circle at 80% 80%, rgba(0, 255, 136, 0.05) 0%, transparent 50%);
+        radial-gradient(circle at 20% 50%, rgba(239, 68, 68, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(34, 197, 94, 0.05) 0%, transparent 50%);
     pointer-events: none;
     z-index: 0;
 }
@@ -46,7 +46,7 @@
 }
 
 .page-title-icon svg {
-    filter: drop-shadow(0 0 8px rgba(0, 212, 255, 0.4));
+    filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.4));
 }
 
 .page-subtitle {
@@ -57,7 +57,7 @@
 /* Cards */
 .card {
     background: rgba(20, 25, 50, 0.85);
-    border: 1px solid rgba(0, 212, 255, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.15);
     border-radius: 16px;
     padding: 2rem;
     backdrop-filter: blur(20px);
@@ -66,8 +66,8 @@
 }
 
 .card:hover {
-    border-color: rgba(0, 212, 255, 0.4);
-    box-shadow: 0 12px 48px rgba(0, 212, 255, 0.15);
+    border-color: rgba(239, 68, 68, 0.4);
+    box-shadow: 0 12px 48px rgba(239, 68, 68, 0.15);
     transform: translateY(-2px);
 }
 
@@ -93,7 +93,7 @@
 }
 
 .card-title-icon svg {
-    filter: drop-shadow(0 0 4px rgba(0, 212, 255, 0.3));
+    filter: drop-shadow(0 0 4px rgba(239, 68, 68, 0.3));
 }
 
 /* Buttons */
@@ -111,13 +111,13 @@
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #00d4ff, #0099cc);
+    background: linear-gradient(135deg, #ef4444, #dc2626);
     color: #fff;
 }
 
 .btn-primary:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(0, 212, 255, 0.3);
+    box-shadow: 0 8px 24px rgba(239, 68, 68, 0.3);
 }
 
 .btn-secondary {
@@ -136,7 +136,7 @@
 }
 
 .btn-success {
-    background: linear-gradient(135deg, #00ff88, #00cc6a);
+    background: linear-gradient(135deg, #22c55e, #16a34a);
     color: #0a0e27;
 }
 
@@ -184,8 +184,8 @@
 .form-select:focus,
 .form-textarea:focus {
     outline: none;
-    border-color: #00d4ff;
-    box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+    border-color: #ef4444;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
 }
 
 .form-input::placeholder {
@@ -253,8 +253,8 @@
 }
 
 .badge-success {
-    background: rgba(0, 255, 136, 0.15);
-    color: #00ff88;
+    background: rgba(34, 197, 94, 0.15);
+    color: #22c55e;
 }
 
 .badge-warning {
@@ -268,8 +268,8 @@
 }
 
 .badge-info {
-    background: rgba(0, 212, 255, 0.15);
-    color: #00d4ff;
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
 }
 
 /* Severity Colors */
@@ -286,13 +286,13 @@
 }
 
 .severity-low {
-    color: #00ff88;
+    color: #22c55e;
 }
 
 /* Stat Cards */
 .stat-card {
     background: rgba(20, 25, 50, 0.7);
-    border: 1px solid rgba(0, 212, 255, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.15);
     border-radius: 12px;
     padding: 1.5rem;
     text-align: center;
@@ -308,15 +308,15 @@
     left: 0;
     right: 0;
     height: 3px;
-    background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.5), transparent);
+    background: linear-gradient(90deg, transparent, rgba(239, 68, 68, 0.5), transparent);
     opacity: 0;
     transition: opacity 0.3s ease;
 }
 
 .stat-card:hover {
-    border-color: rgba(0, 212, 255, 0.3);
+    border-color: rgba(239, 68, 68, 0.3);
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(0, 212, 255, 0.1);
+    box-shadow: 0 8px 24px rgba(239, 68, 68, 0.1);
 }
 
 .stat-card:hover::before {
@@ -326,7 +326,7 @@
 .stat-value {
     font-size: 2rem;
     font-weight: 700;
-    color: #00d4ff;
+    color: #ef4444;
     margin-bottom: 0.25rem;
 }
 
@@ -340,7 +340,7 @@
 /* Quick Action Cards */
 .action-card {
     background: rgba(20, 25, 50, 0.7);
-    border: 1px solid rgba(0, 212, 255, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.15);
     border-radius: 16px;
     padding: 2rem;
     cursor: pointer;
@@ -353,10 +353,10 @@
 }
 
 .action-card:hover {
-    background: rgba(0, 212, 255, 0.08);
-    border-color: rgba(0, 212, 255, 0.4);
+    background: rgba(239, 68, 68, 0.08);
+    border-color: rgba(239, 68, 68, 0.4);
     transform: translateY(-6px);
-    box-shadow: 0 16px 48px rgba(0, 212, 255, 0.2);
+    box-shadow: 0 16px 48px rgba(239, 68, 68, 0.2);
 }
 
 .action-card-icon {
@@ -366,9 +366,9 @@
     width: 64px;
     height: 64px;
     margin-bottom: 1rem;
-    background: rgba(0, 212, 255, 0.1);
+    background: rgba(239, 68, 68, 0.1);
     border-radius: 12px;
-    border: 1px solid rgba(0, 212, 255, 0.2);
+    border: 1px solid rgba(239, 68, 68, 0.2);
     transition: all 0.3s ease;
 }
 
@@ -377,14 +377,14 @@
 }
 
 .action-card:hover .action-card-icon {
-    background: rgba(0, 212, 255, 0.2);
-    border-color: rgba(0, 212, 255, 0.4);
+    background: rgba(239, 68, 68, 0.2);
+    border-color: rgba(239, 68, 68, 0.4);
     transform: scale(1.05);
 }
 
 .action-card:hover .action-card-icon svg {
     transform: scale(1.1);
-    filter: drop-shadow(0 0 12px rgba(0, 212, 255, 0.6));
+    filter: drop-shadow(0 0 12px rgba(239, 68, 68, 0.6));
 }
 
 .action-card-title {
@@ -406,7 +406,7 @@
     width: 20px;
     height: 20px;
     border: 2px solid rgba(255, 255, 255, 0.3);
-    border-top-color: #00d4ff;
+    border-top-color: #ef4444;
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
 }
@@ -450,7 +450,7 @@
     padding: 1rem;
     font-family: 'Fira Code', 'Monaco', monospace;
     font-size: 0.85rem;
-    color: #00ff88;
+    color: #22c55e;
     overflow-x: auto;
     white-space: pre-wrap;
     word-break: break-all;
@@ -533,7 +533,7 @@
     border-radius: 4px;
     font-family: 'Fira Code', 'Monaco', monospace;
     font-size: 0.85em;
-    color: #00ff88;
+    color: #22c55e;
 }
 
 .chat-message-content pre {
@@ -580,7 +580,7 @@ select.form-input option {
     padding: 0.5rem 1rem;
     margin-bottom: 1rem;
     background: rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(0, 212, 255, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.12);
     border-radius: 8px;
     font-family: 'Fira Code', 'Monaco', monospace;
     font-size: 0.72rem;
@@ -602,7 +602,7 @@ select.form-input option {
 }
 
 .qd-hud-value {
-    color: #00d4ff;
+    color: #ef4444;
     font-weight: 600;
 }
 
@@ -647,19 +647,19 @@ select.form-input option {
     gap: 0.5rem;
     padding: 0.5rem 0.85rem;
     border-radius: 10px;
-    background: rgba(0, 212, 255, 0.04);
-    border: 1px solid rgba(0, 212, 255, 0.12);
+    background: rgba(239, 68, 68, 0.04);
+    border: 1px solid rgba(239, 68, 68, 0.12);
     transition: all 0.25s ease;
 }
 
 .qd-cap-chip:hover {
-    background: rgba(0, 212, 255, 0.1);
-    border-color: rgba(0, 212, 255, 0.3);
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.3);
     transform: translateY(-1px);
 }
 
 .qd-cap-icon {
-    color: #00d4ff;
+    color: #ef4444;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -667,13 +667,13 @@ select.form-input option {
 }
 
 .qd-cap-icon svg {
-    filter: drop-shadow(0 0 3px rgba(0, 212, 255, 0.3));
+    filter: drop-shadow(0 0 3px rgba(239, 68, 68, 0.3));
 }
 
 .qd-cap-title {
     font-size: 0.78rem;
     font-weight: 600;
-    color: #e0f0ff;
+    color: #fef2f2;
 }
 
 .qd-cap-desc {
@@ -709,7 +709,7 @@ select.form-input option {
 }
 
 .qd-chat-area::-webkit-scrollbar-thumb {
-    background: rgba(0, 212, 255, 0.25);
+    background: rgba(239, 68, 68, 0.25);
     border-radius: 3px;
 }
 
@@ -720,7 +720,7 @@ select.form-input option {
 }
 
 .qd-empty-icon {
-    color: #00d4ff;
+    color: #ef4444;
     margin-bottom: 0.75rem;
     display: flex;
     justify-content: center;
@@ -729,13 +729,13 @@ select.form-input option {
 .qd-empty-icon svg {
     width: 56px;
     height: 56px;
-    filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.4));
+    filter: drop-shadow(0 0 20px rgba(239, 68, 68, 0.4));
     animation: pulse 3s infinite;
 }
 
 .qd-empty-title {
     font-size: 1.25rem;
-    color: #e0f0ff;
+    color: #fef2f2;
     font-weight: 600;
     margin-bottom: 0.25rem;
 }
@@ -768,9 +768,9 @@ select.form-input option {
     gap: 0.5rem;
     padding: 0.65rem 0.85rem;
     border-radius: 10px;
-    background: rgba(0, 212, 255, 0.04);
-    border: 1px solid rgba(0, 212, 255, 0.12);
-    color: #c0e0f0;
+    background: rgba(239, 68, 68, 0.04);
+    border: 1px solid rgba(239, 68, 68, 0.12);
+    color: #fecaca;
     cursor: pointer;
     transition: all 0.2s ease;
     font-size: 0.78rem;
@@ -778,14 +778,14 @@ select.form-input option {
 }
 
 .qd-quick-card:hover {
-    background: rgba(0, 212, 255, 0.1);
-    border-color: rgba(0, 212, 255, 0.35);
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.35);
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 212, 255, 0.12);
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.12);
 }
 
 .qd-quick-icon {
-    color: #00d4ff;
+    color: #ef4444;
     flex-shrink: 0;
     display: flex;
     align-items: center;
@@ -824,15 +824,15 @@ select.form-input option {
 }
 
 .qd-msg-user .qd-msg-avatar {
-    background: rgba(0, 212, 255, 0.15);
-    color: #00d4ff;
-    border: 1px solid rgba(0, 212, 255, 0.3);
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
 .qd-msg-assistant .qd-msg-avatar {
-    background: rgba(0, 255, 136, 0.1);
-    color: #00ff88;
-    border: 1px solid rgba(0, 255, 136, 0.25);
+    background: rgba(34, 197, 94, 0.1);
+    color: #22c55e;
+    border: 1px solid rgba(34, 197, 94, 0.25);
 }
 
 .qd-msg-body {
@@ -845,13 +845,13 @@ select.form-input option {
 }
 
 .qd-msg-user .qd-msg-body {
-    background: rgba(0, 212, 255, 0.06);
-    border-color: rgba(0, 212, 255, 0.12);
+    background: rgba(239, 68, 68, 0.06);
+    border-color: rgba(239, 68, 68, 0.12);
 }
 
 .qd-msg-streaming .qd-msg-body {
-    border-left: 2px solid #00d4ff;
-    background: rgba(0, 212, 255, 0.03);
+    border-left: 2px solid #ef4444;
+    background: rgba(239, 68, 68, 0.03);
 }
 
 .qd-msg-role {
@@ -863,11 +863,11 @@ select.form-input option {
 }
 
 .qd-msg-user .qd-msg-role {
-    color: #00d4ff;
+    color: #ef4444;
 }
 
 .qd-msg-assistant .qd-msg-role {
-    color: #00ff88;
+    color: #22c55e;
 }
 
 .qd-msg-error {
@@ -878,7 +878,7 @@ select.form-input option {
 .qd-cursor {
     opacity: 0.5;
     animation: blink 1s infinite;
-    color: #00d4ff;
+    color: #ef4444;
 }
 
 .qd-thinking {
@@ -896,16 +896,16 @@ select.form-input option {
 
 .qd-input {
     flex: 1;
-    border-color: rgba(0, 212, 255, 0.15) !important;
+    border-color: rgba(239, 68, 68, 0.15) !important;
 }
 
 .qd-input:focus {
-    border-color: #00d4ff !important;
-    box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.12) !important;
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12) !important;
 }
 
 .qd-btn-send {
-    background: linear-gradient(135deg, #00d4ff, #0099cc);
+    background: linear-gradient(135deg, #ef4444, #dc2626);
     color: #fff;
     font-weight: 600;
     min-width: 90px;
@@ -916,7 +916,7 @@ select.form-input option {
 
 .qd-btn-send:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(0, 212, 255, 0.3);
+    box-shadow: 0 8px 24px rgba(239, 68, 68, 0.3);
 }
 
 .qd-btn-send:disabled {
@@ -939,13 +939,6 @@ select.form-input option {
 
 
 
-
-
-
-flex-wrap: wrap;
-gap: 0.6rem;
-margin-bottom: 1.25rem;
-}
 
 .qd-cap-chip {
     display: flex;
@@ -1114,9 +1107,9 @@ margin-bottom: 1.25rem;
 }
 
 .qd-msg-user .qd-msg-avatar {
-    background: rgba(0, 212, 255, 0.15);
-    color: #00d4ff;
-    border: 1px solid rgba(0, 212, 255, 0.3);
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
 .qd-msg-assistant .qd-msg-avatar {
@@ -1135,8 +1128,8 @@ margin-bottom: 1.25rem;
 }
 
 .qd-msg-user .qd-msg-body {
-    background: rgba(0, 212, 255, 0.06);
-    border-color: rgba(0, 212, 255, 0.12);
+    background: rgba(239, 68, 68, 0.06);
+    border-color: rgba(239, 68, 68, 0.12);
 }
 
 .qd-msg-streaming .qd-msg-body {
@@ -1153,7 +1146,7 @@ margin-bottom: 1.25rem;
 }
 
 .qd-msg-user .qd-msg-role {
-    color: #00d4ff;
+    color: #ef4444;
 }
 
 .qd-msg-assistant .qd-msg-role {

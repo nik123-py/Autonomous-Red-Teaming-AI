@@ -63,7 +63,7 @@ function SimulationPage() {
         none: '#ff4444',
         public: '#ffaa00',
         internal: '#00aaff',
-        admin: '#00ff88'
+        admin: '#22c55e'
     }
 
     return (
@@ -190,7 +190,7 @@ function SimulationPage() {
 
                     <div className="grid-4" style={{ marginBottom: '1.5rem' }}>
                         <div className="stat-card">
-                            <div className="stat-value" style={{ color: '#00ff88' }}>
+                            <div className="stat-value" style={{ color: '#22c55e' }}>
                                 {simulationResult.successful_attacks}
                             </div>
                             <div className="stat-label">Successful</div>
@@ -222,10 +222,10 @@ function SimulationPage() {
                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                                 <span>{simulationResult.hint_success ? '✅' : '❌'}</span>
                                 <strong>Strategic Hint: </strong>
-                                <span style={{ color: '#00d4ff' }}>
+                                <span style={{ color: '#ef4444' }}>
                                     {simulationResult.strategic_hint_used.replace(/_/g, ' ').toUpperCase()}
                                 </span>
-                                <span style={{ color: simulationResult.hint_success ? '#00ff88' : '#ff4444' }}>
+                                <span style={{ color: simulationResult.hint_success ? '#22c55e' : '#ff4444' }}>
                                     - {simulationResult.hint_success ? 'Successful!' : 'Failed'}
                                 </span>
                             </div>
@@ -259,3 +259,4 @@ function SimulationPage() {
 }
 
 export default SimulationPage
+

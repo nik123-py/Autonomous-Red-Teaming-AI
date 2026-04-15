@@ -34,7 +34,7 @@ function AttackHistoryPage() {
         none: '#ff4444',
         public: '#ffaa00',
         internal: '#00aaff',
-        admin: '#00ff88'
+        admin: '#22c55e'
     }
 
     if (loading) {
@@ -101,7 +101,7 @@ function AttackHistoryPage() {
                             <div className="stat-label">Steps</div>
                         </div>
                         <div className="stat-card">
-                            <div className="stat-value" style={{ color: '#00ff88' }}>
+                            <div className="stat-value" style={{ color: '#22c55e' }}>
                                 {bestPath.attack_path?.filter(a => a.success).length || 0}
                             </div>
                             <div className="stat-label">Successful</div>
@@ -206,10 +206,10 @@ function AttackHistoryPage() {
                                                     }}
                                                 >
                                                     <span style={{ color: '#6b7280', width: '30px' }}>#{step.iteration}</span>
-                                                    <span style={{ color: step.success ? '#00ff88' : '#ff4444' }}>
+                                                    <span style={{ color: step.success ? '#22c55e' : '#ff4444' }}>
                                                         {step.success ? '✓' : '✗'}
                                                     </span>
-                                                    <span style={{ color: '#00d4ff' }}>
+                                                    <span style={{ color: '#ef4444' }}>
                                                         {step.action?.replace(/_/g, ' ').toUpperCase()}
                                                     </span>
                                                     <span style={{ color: '#6b7280', marginLeft: 'auto' }}>
@@ -241,3 +241,4 @@ function AttackHistoryPage() {
 }
 
 export default AttackHistoryPage
+

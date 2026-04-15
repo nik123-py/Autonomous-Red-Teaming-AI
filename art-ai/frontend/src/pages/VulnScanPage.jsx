@@ -51,7 +51,7 @@ function VulnScanPage() {
             critical: '#ff4444',
             high: '#ff8800',
             medium: '#ffaa00',
-            low: '#00ff88'
+            low: '#22c55e'
         }
         return colors[severity] || '#6b7280'
     }
@@ -186,7 +186,7 @@ function VulnScanPage() {
                                                         style={{
                                                             marginLeft: '0.5rem',
                                                             background: 'rgba(0, 212, 255, 0.15)',
-                                                            color: '#00d4ff',
+                                                            color: '#ef4444',
                                                             padding: '0.2rem 0.5rem',
                                                             borderRadius: '4px',
                                                             fontSize: '0.7rem'
@@ -234,7 +234,7 @@ function VulnScanPage() {
                                             borderRadius: '6px',
                                             fontSize: '0.85rem'
                                         }}>
-                                            <strong style={{ color: '#00ff88' }}>Remediation:</strong>
+                                            <strong style={{ color: '#22c55e' }}>Remediation:</strong>
                                             <span style={{ color: '#9ca3af', marginLeft: '0.5rem' }}>{vuln.remediation}</span>
                                         </div>
                                     </div>
@@ -255,3 +255,4 @@ function VulnScanPage() {
 }
 
 export default VulnScanPage
+
