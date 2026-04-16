@@ -9,7 +9,7 @@ echo.
 
 REM Start Backend in new window
 echo Starting Backend server (port 8003)...
-start "ART-AI Backend" cmd /k "cd /d "%~dp0backend" && set PORT=8003 && if exist venv\Scripts\python.exe (venv\Scripts\python.exe main.py) else (set PORT=8003 && python main.py)"
+start "ART-AI Backend" cmd /k "cd backend && set PORT=8003 && if exist venv\Scripts\python.exe (venv\Scripts\python.exe main.py) else (python main.py)"
 
 REM Wait a moment so backend can bind first
 ping 127.0.0.1 -n 4 >nul 2>&1
