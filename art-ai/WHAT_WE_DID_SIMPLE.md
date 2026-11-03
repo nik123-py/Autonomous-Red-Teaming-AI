@@ -21,12 +21,14 @@ The project started as a demo that *looked* like it worked but didn't. The learn
 part was broken (it played worse than random guessing). Two of its scanners made up
 their results instead of checking anything. We fixed the learning, replaced the fake
 scanners with real ones, and then built a mode where the agent genuinely attacks the
-practice lab and proves each success with a saved record of the request it sent. Along
-the way we found two interesting things that are worth writing about.
+practice lab and proves each success with a saved record of the request it sent. Then we
+added a guard to the practice sites so attacks could actually fail, and measured when the
+learning is worth anything at all. Along the way we found three things worth writing
+about — including one where the honest answer was "this made it worse.
 
 ---
 
-## What we achieved (5 concrete things)
+## What we achieved (8 concrete things)
 
 ### 1. We fixed the "brain" so it actually learns
 
@@ -91,21 +93,101 @@ its own lock," it worked perfectly.
 The lesson: a simulation can't catch its own bad assumptions. You only find them when
 you test against the real thing.
 
+### 6. We gave the practice sites a way to fight back — and found out when learning actually pays off
+
+This is the result most worth putting in the paper.
+
+We added a "guard" to the practice sites. It blocks some attempts outright, locks you
+out after repeated tries, and limits how fast you can knock. Then we asked one question:
+now that attacks can fail, does the trained agent beat a simple fixed rule?
+
+The answer turned out to depend entirely on **whether the guard is equally strict
+everywhere**:
+
+| Guard setup | Simple fixed rule | Trained agent | Difference |
+|---|---|---|---|
+| Equally strict on every site | wins **60%** | wins **32%** | trained agent is **worse** |
+| Stricter on some sites than others | wins **32%** | wins **100%** | trained agent is **+68 points better** |
+
+(The two 32% figures are a coincidence, not a typo — they describe different things: the
+trained agent under an even guard, and the fixed rule under an uneven one. Each row is 25
+attempts per side. In the second row the margin is wide enough that it isn't luck; in the
+first row the agent is genuinely losing, and we report that rather than hiding it.)
+
+*Why:* if every door is equally hard to open, there is nothing to be clever about — you
+just keep pushing on whichever door you happen to be standing at. Learning only pays off
+when some doors are easier than others, because only then is there a **route** worth
+finding. The agent's advantage comes from choosing *where* to attack, not from attacking
+better.
+
+We could not tune our way around this, and we didn't try to. It's a property of the
+problem, not a flaw in the agent.
+
+*The failure we also report:* we built a version that remembers "this site keeps blocking
+me, give up on it." It did **worse** — 0% success instead of 32%. Remembering the blocks
+made the agent abandon sites it should have kept trying. We left that result in the paper
+instead of deleting it.
+
+### 7. We measured how good the built-in "guesser" models are — nobody ever had
+
+The project shipped machine-learning models that rank which exploit to try first. Nobody
+had ever tested them on examples they hadn't already seen, so there was no honest accuracy
+number anywhere.
+
+We tested them properly (train on 8,000 records, test on 2,000 the model never saw):
+
+- **92 out of 100 correct** on unseen examples (0.918).
+- Always guessing the single most common answer gets **58 out of 100** (0.5765). So the
+  model genuinely adds **+34 points**, it isn't just riding the most common category.
+- Its weak spot: the `remote` category, where it only catches **71%** of cases. That
+  category has only 632 examples out of 10,000, so the model has seen too few of them.
+
+The number the project previously implied (0.948) was measured on data the model was
+probably trained on, which always flatters a model. We report both and say which is which.
+
+### 8. Our own tests were lying to us too — the same way the scanner was
+
+Embarrassing, and worth stating because it's the same disease as point 2.
+
+Our test suite had 42 checks. The function that recorded a failed check only **wrote the
+failure down** — it never actually made the test fail. So the standard test command
+printed `5 passed` whether the checks inside had passed or not. Green lights, no matter
+what.
+
+We proved it by deliberately writing a check that must fail: the old code reported
+`1 passed`, the fixed code correctly fails.
+
+A second problem: when the practice lab wasn't running, some checks reported a **failure**
+rather than saying "skipped — the lab is off." That makes a working system look broken. Now
+skips are counted separately from passes, so a skip can never be mistaken for a pass.
+
 ---
 
 ## The honest part (so you don't get caught out)
 
-- This is a **practice lab on one computer**, not a real network. The attacks always
-  succeed because the practice sites are deliberately broken and never fight back.
-- Because the attacks always succeed, the "learning" part doesn't have much to prove
-  here — a simple rule does almost as well as the trained agent. That's expected and
-  we say so.
+- This is a **practice lab on one computer**, not a real network. With the guard turned
+  off, attacks always succeed, because the practice sites are deliberately broken. The
+  guard in point 6 is something we added ourselves, not a real defence product, and it
+  does not learn or adapt to the attacker.
+- With the guard off, the attacks always succeed, so the "learning" part doesn't have
+  much to prove — a simple rule does almost as well as the trained agent. That's
+  expected and we say so. Point 6 is the one setting where learning clearly wins, and
+  only because the guard is uneven there.
 - Other researchers (papers called **GAP**, **PenGym**, **CRLF**, 2024–2025) already
   did the "agent attacks a real lab" idea, and more thoroughly. So that part is **not
-  new**. What's genuinely ours is the specific lesson in point 5 and the "keep
+  new**. What's genuinely ours is the lesson in point 5, the
+  "learning only helps when defences are uneven" result in point 6, and the "keep
   receipts" evidence log.
-- The chatbot feature doesn't work (no AI model connected) and some API keys were
-  accidentally saved in the code and should be changed.
+- The chatbot feature doesn't work — no AI model is connected to it.
+- One real API key (for Google's Gemini) was typed directly into the code and committed.
+  It is still readable in the project's saved history, so it has to be **cancelled at
+  Google**, not just deleted from the file — deleting it from today's code does not remove
+  it from the history. To be exact about what did *not* happen: the `.env` secrets file was
+  never committed at all. Only that one key in `main.py` was exposed.
+- The **dashboard is a demo, not the experiment.** The research numbers all come from the
+  scripts in `backend/experiments/`. The dashboard still uses the old rough guesswork
+  numbers, so clicking around the web interface will not reproduce any result in the
+  paper. We say this in the paper rather than letting a reader assume otherwise.
 
 ---
 
@@ -148,6 +230,21 @@ close our agent gets. (Our agent reaches 93% of perfect.)
 It has to be based on real proof. Example: "the login attack worked" is only true if
 the server actually handed back an admin token. Not a guess — a yes/no based on the
 real response.
+
+**Guard (we call it the "defender")** — code we added that makes the practice sites push
+back: it blocks a share of attempts, locks you out after repeated failures, and limits how
+fast you can try. It only ever makes attacks *fail*; it can never hand the agent a success
+it didn't earn. It does not learn or adapt, so it is not a real blue-team opponent.
+
+**Baseline (the "simple fixed rule")** — a dumb comparison opponent that always does the
+same obvious thing in the same order, with no learning. If the trained agent can't beat
+this, the learning isn't worth anything. Reporting the gap against a baseline is the
+difference between "our agent got 100%" and a result that actually means something.
+
+**Held-out test** — judging a model only on examples it was never shown during training.
+Testing a model on data it already learned from is like marking your own homework with the
+answer sheet open: the score looks good and tells you nothing. This is why point 7 reports
+0.918 rather than the flattering 0.948.
 
 **Evidence log** — a file where we record every action: what request was sent, what
 the server replied, and the proof that justified counting it as a success. This is what
