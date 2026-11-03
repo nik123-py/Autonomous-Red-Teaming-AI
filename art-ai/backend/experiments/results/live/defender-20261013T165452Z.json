@@ -1,0 +1,39 @@
+{
+  "run_id": "20261013T165452Z",
+  "args": {
+    "strengths": [
+      4
+    ],
+    "train": 120,
+    "eval": 25,
+    "max_steps": 20,
+    "seed": 12345,
+    "dry_run": false
+  },
+  "rows": [
+    {
+      "strength": 4,
+      "label": "heterogeneous",
+      "greedy": {
+        "n": 25,
+        "wins": 8,
+        "win_rate": 0.32,
+        "lo": 0.17204987516891143,
+        "hi": 0.5159008626542329,
+        "mean_steps": 7.0
+      },
+      "learned": {
+        "n": 25,
+        "wins": 25,
+        "win_rate": 1.0,
+        "lo": 0.8668035060468213,
+        "hi": 1.0,
+        "mean_steps": 6.24
+      }
+    }
+  ],
+  "cost": {
+    "requests": 487,
+    "wall_s": 49.6
+  }
+}

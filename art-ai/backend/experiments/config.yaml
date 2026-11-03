@@ -1,0 +1,37 @@
+# Experiment configuration for the ART-AI research harness.
+# Every hyperparameter that affects a reported number lives here. run_all.py logs
+# this file, the resolved seed list, and the git commit alongside the results.
+
+seed: 12345          # master seed; per-run seeds are derived deterministically from it
+n_runs: 20           # independent runs per configuration (Step 3: N >= 20)
+n_train: 800         # training episodes per run
+max_steps: 15        # step cap per episode (optimal path ~7 steps; tight enough that
+                     # win-rate is discriminating — random ~0.17, optimal ~1.0)
+n_eval: 200          # evaluation episodes per run (greedy)
+
+# Learning-curve snapshots (for sample-efficiency + PNG curves)
+eval_every: 25
+n_eval_snapshot: 100
+win_threshold: 0.80  # sample efficiency = first snapshot episode with win-rate >= this
+
+# Default Q-learning hyperparameters (the "fixed agent")
+agent:
+  learning_rate: 0.2
+  discount: 0.95
+  epsilon: 0.3
+  epsilon_decay: 0.995
+  min_epsilon: 0.02
+  temperature: 0.5
+  use_double_q: true
+  use_replay: true
+  batch_size: 32
+  use_boltzmann: false
+  use_hint: false
+  hint_bias: 0.5
+
+# Ablations: each entry overrides the default agent config above.
+ablations:
+  double_q_off:      {use_double_q: false}
+  replay_off:        {use_replay: false}
+  boltzmann_on:      {use_boltzmann: true}
+  hint_on:           {use_hint: true}

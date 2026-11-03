@@ -1,29 +1,37 @@
-version: '3.8'
+# Local vulnerable lab for ART-AI research. ALL services are authorized, self-hosted
+# targets and every port is bound to 127.0.0.1 so nothing is reachable off this host.
+# Do not expose these containers to any external network.
+#
+# Health checks use a tool each image actually ships (these images have inconsistent
+# tooling: juice-shop has no shell, dvwa/webgoat ship no HTTP client). Each check is a
+# TCP-connect liveness probe against the in-container service port.
 
 services:
-  # OWASP Juice Shop - Vulnerable Web Application
+  # OWASP Juice Shop - Vulnerable Web Application (maps to MDP host 0: juice-shop)
   juice-shop:
     image: bkimminich/juice-shop:latest
     container_name: art-ai-juice-shop
     ports:
-      - "3001:3000"
+      - "127.0.0.1:3001:3000"
     environment:
       - NODE_ENV=production
     networks:
       - art-ai-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000"]
+      # no shell/wget in this image; node lives at /nodejs/bin/node
+      test: ["CMD", "/nodejs/bin/node", "-e", "require('net').connect(3000,'localhost').on('connect',()=>process.exit(0)).on('error',()=>process.exit(1))"]
       interval: 30s
       timeout: 10s
-      retries: 3
+      retries: 5
+      start_period: 60s
 
-  # DVWA - Damn Vulnerable Web Application
+  # DVWA - Damn Vulnerable Web Application (maps to MDP host 1: dvwa)
   dvwa:
     image: vulnerables/web-dvwa:latest
     container_name: art-ai-dvwa
     ports:
-      - "3002:80"
+      - "127.0.0.1:3002:80"
     environment:
       - MYSQL_ROOT_PASSWORD=p@ssw0rd
       - MYSQL_DATABASE=dvwa
@@ -32,22 +40,83 @@ services:
     networks:
       - art-ai-network
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "bash", "-c", "exec 3<>/dev/tcp/localhost/80"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
 
-  # Vulnerable API Server (Simple Flask app)
+  # Local vulnerable Flask API (maps to MDP host 2: flask-api)
   vulnerable-api:
     build:
       context: ./vulnerable-api
       dockerfile: Dockerfile
     container_name: art-ai-vulnerable-api
     ports:
-      - "3003:5000"
+      - "127.0.0.1:3003:5000"
     networks:
       - art-ai-network
     restart: unless-stopped
     environment:
       - FLASK_ENV=development
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import socket,sys;\ntry:\n socket.create_connection(('localhost',5000),5).close()\nexcept Exception:\n sys.exit(1)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
+  # OWASP WebGoat - deliberately insecure Java web app
+  webgoat:
+    image: webgoat/webgoat:latest
+    container_name: art-ai-webgoat
+    ports:
+      - "127.0.0.1:3004:8080"
+    networks:
+      - art-ai-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "bash", "-c", "exec 3<>/dev/tcp/localhost/8080"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  # VAmPI - Vulnerable API (OWASP API Top 10)
+  vampi:
+    image: erev0s/vampi:latest
+    container_name: art-ai-vampi
+    ports:
+      - "127.0.0.1:3005:5000"
+    environment:
+      - vulnerable=1
+    networks:
+      - art-ai-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import socket,sys;\ntry:\n socket.create_connection(('localhost',5000),5).close()\nexcept Exception:\n sys.exit(1)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
+  # bWAPP - buggy web application
+  bwapp:
+    image: raesene/bwapp:latest
+    container_name: art-ai-bwapp
+    ports:
+      - "127.0.0.1:3006:80"
+    networks:
+      - art-ai-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import socket,sys;\ntry:\n socket.create_connection(('localhost',80),5).close()\nexcept Exception:\n sys.exit(1)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
 
 networks:
   art-ai-network:
     driver: bridge
-

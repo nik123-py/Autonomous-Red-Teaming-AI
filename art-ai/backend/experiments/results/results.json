@@ -1,0 +1,109 @@
+{
+  "v_star": 0.6772141137267933,
+  "rows": [
+    {
+      "config": "random",
+      "win_rate_mean": 0.17075,
+      "win_rate_ci95": 0.012248520996493166,
+      "steps_mean": 11.502460751626744,
+      "steps_ci95": 0.19022684534557557,
+      "return_mean": -0.003159219792851384,
+      "return_ci95": 0.008015963216853885,
+      "regret_mean": 0.6803733335196447,
+      "regret_ci95": 0.008015963216853883
+    },
+    {
+      "config": "greedy_by_signal",
+      "win_rate_mean": 0.999,
+      "win_rate_ci95": 0.0009603452989016424,
+      "steps_mean": 7.486272613065327,
+      "steps_ci95": 0.04529506255598202,
+      "return_mean": 0.6549920419559514,
+      "return_ci95": 0.0021884382292433288,
+      "regret_mean": 0.022222071770841872,
+      "regret_ci95": 0.0021884382292433288
+    },
+    {
+      "config": "q_learning",
+      "win_rate_mean": 0.9595,
+      "win_rate_ci95": 0.03519455889064125,
+      "steps_mean": 7.42828676181054,
+      "steps_ci95": 0.2202955847149907,
+      "return_mean": 0.6307126288979388,
+      "return_ci95": 0.031308313703374134,
+      "regret_mean": 0.046501484828854536,
+      "regret_ci95": 0.031308313703374134,
+      "episodes_to_threshold_mean": 36.25,
+      "episodes_to_threshold_ci95": 8.03034026143498,
+      "q_table_size_mean": 59.95,
+      "q_table_size_ci95": 1.7673680469894237
+    },
+    {
+      "config": "double_q_off",
+      "win_rate_mean": 0.976,
+      "win_rate_ci95": 0.029045484406939947,
+      "steps_mean": 7.329940524645721,
+      "steps_ci95": 0.229121819414153,
+      "return_mean": 0.6465990721358162,
+      "return_ci95": 0.02651755556599777,
+      "regret_mean": 0.030615041590977044,
+      "regret_ci95": 0.02651755556599777,
+      "episodes_to_threshold_mean": 28.75,
+      "episodes_to_threshold_ci95": 5.725693921992187,
+      "q_table_size_mean": 57.95,
+      "q_table_size_ci95": 2.5247905292867294
+    },
+    {
+      "config": "replay_off",
+      "win_rate_mean": 0.9730000000000001,
+      "win_rate_ci95": 0.032561583321929155,
+      "steps_mean": 7.406665080120327,
+      "steps_ci95": 0.23923349275189765,
+      "return_mean": 0.6414623028285764,
+      "return_ci95": 0.029912039684632828,
+      "regret_mean": 0.03575181089821684,
+      "regret_ci95": 0.029912039684632828,
+      "episodes_to_threshold_mean": 73.75,
+      "episodes_to_threshold_ci95": 22.926358439047075,
+      "q_table_size_mean": 56.65,
+      "q_table_size_ci95": 2.9297418529290784
+    },
+    {
+      "config": "boltzmann_on",
+      "win_rate_mean": 0.9727499999999999,
+      "win_rate_ci95": 0.02699743766401791,
+      "steps_mean": 7.210558291911122,
+      "steps_ci95": 0.11864792029296764,
+      "return_mean": 0.649349316023597,
+      "return_ci95": 0.021240918294452887,
+      "regret_mean": 0.027864797703196255,
+      "regret_ci95": 0.021240918294452887,
+      "episodes_to_threshold_mean": 33.75,
+      "episodes_to_threshold_ci95": 8.718638275467946,
+      "q_table_size_mean": 65.0,
+      "q_table_size_ci95": 0.0
+    },
+    {
+      "config": "hint_on",
+      "win_rate_mean": 0.978,
+      "win_rate_ci95": 0.027124442529542627,
+      "steps_mean": 7.4204258915695105,
+      "steps_ci95": 0.11169886642896548,
+      "return_mean": 0.6429275966993026,
+      "return_ci95": 0.020337363127587365,
+      "regret_mean": 0.03428651702749076,
+      "regret_ci95": 0.02033736312758737,
+      "episodes_to_threshold_mean": 30.0,
+      "episodes_to_threshold_ci95": 6.121024273608207,
+      "q_table_size_mean": 52.85,
+      "q_table_size_ci95": 2.9336741301876685
+    },
+    {
+      "config": "value_iteration_optimum",
+      "return_mean": 0.6772141137267933,
+      "return_ci95": 0.0,
+      "regret_mean": 0.0,
+      "regret_ci95": 0.0
+    }
+  ]
+}

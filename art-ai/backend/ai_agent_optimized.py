@@ -397,8 +397,19 @@ class OptimizedQLearningAgent:
         next_state: str,
         done: bool = False
     ):
-        """Update Q-value with experience replay support"""
-        # Store experience in replay buffer
+        """Update Q-value: always apply the online transition, plus replay if ready.
+
+        Previously, with experience replay enabled, the current transition was only
+        buffered -- nothing was written to the Q-table until the buffer reached
+        ``batch_size`` (32). Short interactive sessions therefore never learned at
+        all (Q-table stayed empty). We now always apply the online update for the
+        transition just observed, and additionally sample a replay batch once the
+        buffer is large enough.
+        """
+        # Always learn from the transition we just observed.
+        self.q_table.update_q_value(state, action, reward, next_state, done=done)
+
+        # Store experience in replay buffer for additional off-policy updates
         if self.use_experience_replay:
             experience = Experience(
                 state=state,
@@ -408,16 +419,13 @@ class OptimizedQLearningAgent:
                 done=done
             )
             self.replay_buffer.add(experience)
-            
+
             # Store in n-step buffer
             self.n_step_buffer.append(experience)
-            
+
             # Perform batch update if buffer is ready
             if self.replay_buffer.is_ready(self.batch_size):
                 self._replay_update()
-        else:
-            # Direct update
-            self.q_table.update_q_value(state, action, reward, next_state, done=done)
         
         # Update statistics
         self.total_rewards += reward

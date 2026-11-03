@@ -207,13 +207,34 @@ function VulnScanPage() {
                                             </span>
                                         </div>
 
-                                        {vuln.cve_id && (
-                                            <div style={{ marginBottom: '0.5rem' }}>
-                                                <span className="badge badge-info">{vuln.cve_id}</span>
-                                            </div>
-                                        )}
+                                        <div style={{ marginBottom: '0.5rem', display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+                                            {vuln.cve_id && <span className="badge badge-info">{vuln.cve_id}</span>}
+                                            {vuln.cwe && <span className="badge badge-info">{vuln.cwe}</span>}
+                                            {vuln.confirmed && (
+                                                <span className="badge" style={{ background: 'rgba(34,197,94,0.15)', color: '#22c55e' }}>
+                                                    ✓ CONFIRMED
+                                                </span>
+                                            )}
+                                        </div>
 
                                         <p style={{ color: '#9ca3af', marginBottom: '0.75rem' }}>{vuln.description}</p>
+
+                                        {vuln.evidence && (
+                                            <div style={{
+                                                marginBottom: '0.75rem', padding: '0.6rem 0.75rem',
+                                                background: 'rgba(255,255,255,0.03)',
+                                                borderLeft: '3px solid #22c55e', borderRadius: '4px',
+                                                fontSize: '0.82rem'
+                                            }}>
+                                                <strong style={{ color: '#22c55e' }}>Evidence:</strong>
+                                                <span style={{ color: '#9ca3af', marginLeft: '0.4rem' }}>{vuln.evidence}</span>
+                                                {Array.isArray(vuln.verified_by) && vuln.verified_by.length > 0 && (
+                                                    <div style={{ marginTop: '0.4rem', color: '#6b7280', fontFamily: 'monospace', fontSize: '0.76rem' }}>
+                                                        {vuln.verified_by.map((r, i) => <div key={i}>{r}</div>)}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
 
                                         <div style={{ fontSize: '0.85rem', color: '#6b7280' }}>
                                             <div><strong>Service:</strong> {vuln.affected_service}{vuln.affected_port && `:${vuln.affected_port}`}</div>
