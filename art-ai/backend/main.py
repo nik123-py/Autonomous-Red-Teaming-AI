@@ -22,7 +22,7 @@ from attack_engine import AttackEngine, AttackAction, AttackResult
 from ai_agent import QLearningAgent
 from ai_agent_optimized import OptimizedQLearningAgent  # Optimized RL agent
 from storage import AttackPathStorage
-from recon import ReconEngine
+from recon import ReconEngine, UnauthorizedTargetError
 from vulnerability_scanner import VulnerabilityScanner
 from exploit_generator import ExploitGenerator, ExploitType
 from ai.knowledge import ExploitLibrarian
@@ -181,15 +181,20 @@ async def execute_attack(request: AttackRequest):
     except ValueError:
         raise HTTPException(status_code=400, detail=f"Invalid action: {request.action}")
 
+    # Capture the state BEFORE the attack mutates the environment. Reading it
+    # afterwards recorded the transition as (s', a, r, s') instead of (s, a, r, s'),
+    # so the agent was learning against the wrong source state.
+    state_key = environment.current_access_level.value
+
     # Execute attack
     result: AttackResult = attack_engine.execute_attack(action, environment)
-    
+
     # Calculate reward for RL agent
     reward = ai_agent.calculate_reward(result, environment, action.value)
-    
-    # Update agent's Q-table (with done flag for terminal states)
-    state_key = environment.current_access_level.value
-    done = environment.current_access_level == AccessLevel.ADMIN
+
+    # Update agent's Q-table (with done flag for terminal states).
+    # ADMIN (goal) and a block (caught by IDS) are both terminal.
+    done = (environment.current_access_level == AccessLevel.ADMIN) or result.blocked
     ai_agent.update_q_value(state_key, action.value, reward, result.new_access_level.value, done=done)
     
     # Track success/failure for statistics
@@ -256,9 +261,12 @@ async def run_simulation(request: SimulationRequest):
         reward = ai_agent.calculate_reward(result, environment, action_str)
         episode_reward += reward
         
-        # Update Q-table (with done flag for terminal states)
+        # Update Q-table (with done flag for terminal states).
+        # Both ADMIN (goal) and a block (caught) end the episode, so both must set
+        # done -- otherwise the terminal transition bootstraps off a future that
+        # cannot happen.
         new_state_key = result.new_access_level.value
-        done = environment.current_access_level == AccessLevel.ADMIN
+        done = (environment.current_access_level == AccessLevel.ADMIN) or result.blocked
         ai_agent.update_q_value(state_key, action_str, reward, new_state_key, done=done)
         
         # Track success/failure for statistics
@@ -292,6 +300,13 @@ async def run_simulation(request: SimulationRequest):
         if environment.current_access_level == AccessLevel.ADMIN:
             break
 
+        # Stop if the IDS blocked us: once "attacker_ip" is in blocked_ips every
+        # subsequent execute_attack() short-circuits to blocked=True, so continuing
+        # only accumulates the -15 block penalty and corrupts the Q-values. A block
+        # is a terminal outcome for the episode.
+        if result.blocked:
+            break
+
     # Decay epsilon after episode
     ai_agent.decay_epsilon()
     
@@ -323,8 +338,17 @@ async def run_simulation(request: SimulationRequest):
 async def scan_target(request: ScanRequest):
     """
     Perform network/port scanning and vulnerability scanning on target.
+
+    Targets are restricted to the authorized local lab (loopback/private addresses);
+    anything else is rejected with HTTP 400.
     """
     try:
+        # Validate scope up-front so out-of-scope targets get a clear 400, not a 500.
+        try:
+            recon_engine.resolve_and_authorize(request.target)
+        except UnauthorizedTargetError as e:
+            raise HTTPException(status_code=400, detail=str(e))
+
         if request.scan_type == "ports" or request.scan_type == "full":
             # Network and port scanning
             port_scan_result = recon_engine.scan_ports(request.target)
@@ -395,6 +419,9 @@ async def scan_target(request: ScanRequest):
             generated_exploits=generated_exploits if generated_exploits else None,
             system_analysis=system_analysis
         )
+    except HTTPException:
+        # Preserve intentional status codes (e.g. the 400 for out-of-scope targets)
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Scan failed: {str(e)}")
 
@@ -428,9 +455,14 @@ async def get_best_attack_path():
 
 @app.post("/api/reset")
 async def reset_environment():
-    """Reset environment to initial state"""
+    """Reset the environment to its initial state (start a new episode).
+
+    This deliberately does NOT reset the RL agent. It previously called
+    ai_agent.reset(), which wipes the Q-table -- so every new episode erased
+    everything the agent had learned and it could never improve across episodes.
+    Use POST /api/rl-agent/reset to explicitly clear the agent's learning.
+    """
     environment.reset(librarian=exploit_librarian)
-    ai_agent.reset()
     return {"message": "Environment reset successfully"}
 
 
@@ -1063,7 +1095,10 @@ OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "llama2-uncensored")
 # QuantumDefender AI — Gemini API Integration
 # ---------------------------------------------------------------------------
 
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "AIzaSyD5Aufv3cZbK4jqCetnTwcgrz7l8oUbMak")
+# Read from the environment only. A hardcoded fallback key was previously committed here
+# and is therefore exposed in this repository's git history -- that key must be revoked.
+# Set GEMINI_API_KEY in backend/.env (which is gitignored) instead.
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 GEMINI_MODEL = "gemini-3.0-flash"
 GEMINI_API_URL = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}"
 

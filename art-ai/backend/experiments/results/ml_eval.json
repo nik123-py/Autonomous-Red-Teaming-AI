@@ -1,0 +1,80 @@
+{
+  "n_records": 10000,
+  "class_counts": {
+    "dos": 5765,
+    "local": 3603,
+    "remote": 632
+  },
+  "baseline": {
+    "strategy": "always predict 'dos'",
+    "accuracy": 0.5765,
+    "macro_f1": 0.24378898403636748
+  },
+  "shipped_model_full_corpus": {
+    "accuracy": 0.948,
+    "macro_f1": 0.9344175676385084,
+    "caveat": "optimistic: shipped model was likely fitted on this same data"
+  },
+  "heldout": {
+    "n_train": 8000,
+    "n_test": 2000,
+    "accuracy": 0.918,
+    "macro_f1": 0.8814282071385477,
+    "lift_over_baseline_acc": 0.3415,
+    "per_class": {
+      "dos": {
+        "precision": 0.9056910569105691,
+        "recall": 0.9661751951431049,
+        "f1-score": 0.9349559378934117,
+        "support": 1153.0
+      },
+      "local": {
+        "precision": 0.9391691394658753,
+        "recall": 0.8779472954230236,
+        "f1-score": 0.9075268817204301,
+        "support": 721.0
+      },
+      "remote": {
+        "precision": 0.9270833333333334,
+        "recall": 0.7063492063492064,
+        "f1-score": 0.8018018018018018,
+        "support": 126.0
+      },
+      "accuracy": 0.918,
+      "macro avg": {
+        "precision": 0.9239811765699258,
+        "recall": 0.8501572323051118,
+        "f1-score": 0.8814282071385477,
+        "support": 2000.0
+      },
+      "weighted avg": {
+        "precision": 0.9191076190863912,
+        "recall": 0.918,
+        "f1-score": 0.9166790525692804,
+        "support": 2000.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        1114,
+        36,
+        3
+      ],
+      [
+        84,
+        633,
+        4
+      ],
+      [
+        32,
+        5,
+        89
+      ]
+    ],
+    "labels": [
+      "dos",
+      "local",
+      "remote"
+    ]
+  }
+}

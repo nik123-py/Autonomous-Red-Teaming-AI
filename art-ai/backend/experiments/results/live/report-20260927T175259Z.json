@@ -1,0 +1,165 @@
+{
+  "run_id": "20260927T175259Z",
+  "args": {
+    "dry_run": false,
+    "measure_only": false,
+    "episodes": 30,
+    "max_steps": 15,
+    "sim_train": 800,
+    "finetune": 25,
+    "measure_M": 30,
+    "seed": 12345
+  },
+  "measured": {
+    "flask-api": {
+      "foothold": {
+        "M": 30,
+        "successes": 30,
+        "rate": 1.0,
+        "ci95": [
+          0.8864829086095221,
+          1.0
+        ]
+      },
+      "privesc": {
+        "M": 30,
+        "successes": 30,
+        "rate": 1.0,
+        "ci95": [
+          0.8864829086095221,
+          1.0
+        ]
+      }
+    },
+    "vampi": {
+      "foothold": {
+        "M": 30,
+        "successes": 30,
+        "rate": 1.0,
+        "ci95": [
+          0.8864829086095221,
+          1.0
+        ]
+      },
+      "privesc": {
+        "M": 30,
+        "successes": 30,
+        "rate": 1.0,
+        "ci95": [
+          0.8864829086095221,
+          1.0
+        ]
+      }
+    },
+    "juice-shop": {
+      "foothold": {
+        "M": 30,
+        "successes": 30,
+        "rate": 1.0,
+        "ci95": [
+          0.8864829086095221,
+          1.0
+        ]
+      },
+      "privesc": {
+        "M": 30,
+        "successes": 30,
+        "rate": 1.0,
+        "ci95": [
+          0.8864829086095221,
+          1.0
+        ]
+      }
+    },
+    "dvwa": {
+      "foothold": {
+        "M": 30,
+        "successes": 30,
+        "rate": 1.0,
+        "ci95": [
+          0.8864829086095221,
+          1.0
+        ]
+      },
+      "privesc": {
+        "M": 30,
+        "successes": 30,
+        "rate": 1.0,
+        "ci95": [
+          0.8864829086095221,
+          1.0
+        ]
+      }
+    },
+    "bwapp": {
+      "foothold": {
+        "M": 30,
+        "successes": 30,
+        "rate": 1.0,
+        "ci95": [
+          0.8864829086095221,
+          1.0
+        ]
+      },
+      "privesc": {
+        "M": 30,
+        "successes": 30,
+        "rate": 1.0,
+        "ci95": [
+          0.8864829086095221,
+          1.0
+        ]
+      }
+    }
+  },
+  "live_rows": [
+    {
+      "config": "random",
+      "n_episodes": 30,
+      "wins": 21,
+      "win_rate": 0.7,
+      "win_lo": 0.5212387898833981,
+      "win_hi": 0.8333543735604105,
+      "mean_steps_to_admin": 10.0,
+      "mean_return": 0.35961112437899045
+    },
+    {
+      "config": "greedy_by_signal",
+      "n_episodes": 30,
+      "wins": 30,
+      "win_rate": 1.0,
+      "win_lo": 0.8864829086095221,
+      "win_hi": 1.0,
+      "mean_steps_to_admin": 6.0,
+      "mean_return": 0.7207993156249999
+    },
+    {
+      "config": "zero_shot_transfer",
+      "n_episodes": 30,
+      "wins": 30,
+      "win_rate": 1.0,
+      "win_lo": 0.8864829086095221,
+      "win_hi": 1.0,
+      "mean_steps_to_admin": 5.0,
+      "mean_return": 0.7692624374999999
+    },
+    {
+      "config": "live_finetuned",
+      "n_episodes": 30,
+      "wins": 30,
+      "win_rate": 1.0,
+      "win_lo": 0.8864829086095221,
+      "win_hi": 1.0,
+      "mean_steps_to_admin": 5.0,
+      "mean_return": 0.7692624374999999
+    }
+  ],
+  "sim_optimum": 0.6772141137267933,
+  "measured_optimum": 0.873975,
+  "cost": {
+    "wall_clock_s": 193.7,
+    "total_requests": 1886,
+    "live_episodes": 145,
+    "requests_per_episode": 13.0
+  }
+}

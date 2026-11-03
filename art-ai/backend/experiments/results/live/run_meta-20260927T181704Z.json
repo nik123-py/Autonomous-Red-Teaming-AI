@@ -1,0 +1,29 @@
+{
+  "run_id": "20260927T181704Z",
+  "git_commit": "dc260469b97e26a1da9f6bbf2e4429ff23425480",
+  "timestamp_utc": "2026-09-27T18:20:48.903558+00:00",
+  "image_digests": {
+    "?": "bkimminich/juice-shop:latest@sha256:73c53fbf442e"
+  },
+  "lab_port_map": {
+    "flask-api": 3003,
+    "vampi": 3005,
+    "juice-shop": 3001,
+    "dvwa": 3002,
+    "bwapp": 3006,
+    "webgoat": 3004
+  },
+  "excluded_hosts": {
+    "webgoat": "lesson-scoped state; no reliable capability oracle"
+  },
+  "config": {
+    "dry_run": false,
+    "measure_only": false,
+    "episodes": 30,
+    "max_steps": 15,
+    "sim_train": 800,
+    "finetune": 25,
+    "measure_M": 30,
+    "seed": 12345
+  }
+}

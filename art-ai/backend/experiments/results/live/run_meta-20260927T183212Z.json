@@ -1,0 +1,27 @@
+{
+  "run_id": "20260927T183212Z",
+  "git_commit": "dc260469b97e26a1da9f6bbf2e4429ff23425480",
+  "timestamp_utc": "2026-09-27T18:34:33.387016+00:00",
+  "image_digests": {
+    "?": "vulnerables/web-dvwa:latest@sha256:dae203fe1164"
+  },
+  "lab_port_map": {
+    "flask-api": 3003,
+    "vampi": 3005,
+    "juice-shop": 3001,
+    "dvwa": 3002,
+    "bwapp": 3006,
+    "webgoat": 3004
+  },
+  "excluded_hosts": {},
+  "config": {
+    "dry_run": false,
+    "measure_only": false,
+    "episodes": 20,
+    "max_steps": 15,
+    "sim_train": 800,
+    "finetune": 15,
+    "measure_M": 15,
+    "seed": 12345
+  }
+}

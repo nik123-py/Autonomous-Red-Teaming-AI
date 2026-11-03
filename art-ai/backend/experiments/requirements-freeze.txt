@@ -1,0 +1,7 @@
+# Frozen dependency set used to generate the results in RESULTS.md.
+# Python 3.14 on Windows 11. Only these are needed by the experiments/ harness.
+matplotlib==3.11.1
+numpy==2.5.1
+pandas==3.0.5
+PyYAML==6.0.3
+scipy==1.18.0

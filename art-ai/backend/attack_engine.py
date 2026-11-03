@@ -141,20 +141,28 @@ class AttackEngine:
             # Check if escalation occurred
             escalated = state.escalate_access(new_level)
             
-            # Discover component
+            # Discover component. Only report it as a NEW discovery the first time,
+            # so the reward function cannot be farmed by repeating the same action.
             component = f"service_{random.randint(1, 10)}"
+            is_new_component = component not in state.visited_components
             state.add_visited_component(component)
-            
-            # Discover vulnerability if applicable
+
+            # Discover vulnerability if applicable. Same rule: a vulnerability is
+            # only a discovery once. Previously this appended a duplicate on every
+            # success, so a non-escalating action (e.g. sql_injection_attempt) paid
+            # its discovery bonus indefinitely and dominated actions that actually
+            # advance access -- a reward-farming loop.
             vulnerability = self.VULNERABILITIES.get(action)
-            if vulnerability:
+            if vulnerability and vulnerability not in state.discovered_vulnerabilities:
                 state.discovered_vulnerabilities.append(vulnerability)
-            
+            elif vulnerability:
+                vulnerability = None  # already known; not a new discovery
+
             return AttackResult(
                 success=True,
                 new_access_level=state.current_access_level,
                 message=f"Successfully executed {action.value}",
-                discovered_component=component,
+                discovered_component=component if is_new_component else None,
                 vulnerability_found=vulnerability
             )
         else:
@@ -165,9 +173,16 @@ class AttackEngine:
             )
 
     def _is_action_applicable(self, action: AttackAction, current_level: AccessLevel) -> bool:
-        """Check if action can be executed at current access level"""
+        """Check if action can be executed at current access level.
+
+        Only actions defined for the CURRENT level are applicable. The previous
+        implementation also allowed any action present in ACCESS_ESCALATIONS, which
+        let privilege_escalation_attempt fire at NONE and jump straight to ADMIN
+        (skipping PUBLIC/INTERNAL), and let lateral_movement_attempt fire at every
+        level as a no-op that still paid a positive reward.
+        """
         level_actions = self.SUCCESS_PROBABILITIES.get(current_level, {})
-        return action in level_actions or action in self.ACCESS_ESCALATIONS
+        return action in level_actions
 
     def _get_success_probability(
         self,
@@ -193,29 +208,16 @@ class AttackEngine:
         return current_level
 
     def get_available_actions(self, current_level: AccessLevel) -> list[AttackAction]:
-        """Get list of available actions for current access level"""
-        available = []
-        
-        # Actions available at all levels
-        base_actions = [
-            AttackAction.PUBLIC_ACCESS_ATTEMPT,
-            AttackAction.SQL_INJECTION_ATTEMPT,
-        ]
-        
-        # Level-specific actions
-        if current_level >= AccessLevel.PUBLIC:
-            available.extend([
-                AttackAction.TOKEN_REUSE_ATTEMPT,
-                AttackAction.XSS_ATTEMPT,
-                AttackAction.PATH_TRAVERSAL_ATTEMPT,
-            ])
-        
-        if current_level >= AccessLevel.INTERNAL:
-            available.extend([
-                AttackAction.PRIVILEGE_ESCALATION_ATTEMPT,
-                AttackAction.LATERAL_MOVEMENT_ATTEMPT,
-                AttackAction.COMMAND_INJECTION_ATTEMPT,
-            ])
-        
-        return list(set(available + base_actions))
+        """Get list of available actions for the current access level.
+
+        This is the single source of truth and is kept consistent with
+        ``_is_action_applicable``: an action is offered if and only if it is
+        actually executable at this level. Previously this offered escalation
+        actions at levels where they were not reachable, so the agent's action
+        space disagreed with what the engine would accept.
+        """
+        return sorted(
+            self.SUCCESS_PROBABILITIES.get(current_level, {}).keys(),
+            key=lambda a: a.value,
+        )
 

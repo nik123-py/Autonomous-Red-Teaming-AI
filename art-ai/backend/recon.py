@@ -1,14 +1,26 @@
 """
 Reconnaissance engine for network and port scanning.
-Simulates network discovery without actual network access.
+
+This performs REAL TCP connect scanning and banner grabbing. It previously returned
+randomized fake results; every function here now reflects the actual state of the
+target.
+
+SCOPE GUARD: scanning is restricted to loopback and RFC1918/private addresses (the
+local vulnerable lab). Any attempt to scan a public/third-party address raises
+``UnauthorizedTargetError``. This keeps the tool inside the authorized sandbox.
 """
 
-import socket
-import random
-from typing import Dict, List, Optional
-from dataclasses import dataclass
-import subprocess
+import ipaddress
 import platform
+import re
+import socket
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from dataclasses import dataclass
+from typing import Dict, List, Optional
+
+
+class UnauthorizedTargetError(ValueError):
+    """Raised when a scan target is outside the authorized local lab scope."""
 
 
 @dataclass
@@ -33,10 +45,10 @@ class ServiceInfo:
 class ReconEngine:
     """
     Network reconnaissance engine.
-    Performs port scanning and service discovery.
+    Performs real port scanning and service discovery against local lab targets.
     """
 
-    # Common ports and services
+    # Port -> default service label. Includes the local ART-AI lab ports.
     COMMON_PORTS = {
         21: "FTP",
         22: "SSH",
@@ -48,213 +60,291 @@ class ReconEngine:
         143: "IMAP",
         443: "HTTPS",
         445: "SMB",
+        # --- local ART-AI vulnerable lab ---
+        3001: "HTTP",   # Juice Shop
+        3002: "HTTP",   # DVWA
+        3003: "HTTP",   # vulnerable Flask API
+        3004: "HTTP",   # WebGoat
+        3005: "HTTP",   # VAmPI
+        3006: "HTTP",   # bWAPP
         3306: "MySQL",
+        5000: "HTTP",
         5432: "PostgreSQL",
+        8000: "HTTP",
+        8003: "HTTP",   # ART-AI backend
         8080: "HTTP-Proxy",
         8443: "HTTPS-Alt",
         9000: "SonarQube",
         27017: "MongoDB",
         6379: "Redis",
-        9200: "Elasticsearch"
+        9200: "Elasticsearch",
+        11434: "Ollama",
     }
 
-    # Service banners (simulated)
-    SERVICE_BANNERS = {
-        "SSH": "SSH-2.0-OpenSSH_8.2",
-        "HTTP": "Apache/2.4.41",
-        "HTTPS": "nginx/1.18.0",
-        "MySQL": "5.7.33-log",
-        "PostgreSQL": "PostgreSQL 13.2",
-        "FTP": "vsftpd 3.0.3",
-        "SMTP": "Postfix smtpd"
-    }
+    # Ports we should speak HTTP to when grabbing a banner.
+    HTTP_PORTS = {80, 443, 3001, 3002, 3003, 3004, 3005, 3006,
+                  5000, 8000, 8003, 8080, 8443, 9200, 9000, 11434}
 
-    def __init__(self):
-        """Initialize reconnaissance engine"""
-        self.scan_timeout = 1.0  # Timeout for port scans
+    def __init__(self, scan_timeout: float = 0.6, max_workers: int = 100):
+        """Initialize reconnaissance engine."""
+        self.scan_timeout = scan_timeout
+        self.max_workers = max_workers
+
+    # ------------------------------------------------------------------ scope
+    @staticmethod
+    def resolve_and_authorize(target: str) -> str:
+        """Resolve ``target`` and confirm it is a local/private address.
+
+        Returns the resolved IP string. Raises UnauthorizedTargetError otherwise.
+        """
+        host = target.strip()
+        # strip scheme/path if a URL was passed
+        host = re.sub(r"^[a-zA-Z]+://", "", host).split("/")[0]
+        # strip :port
+        if host.count(":") == 1:
+            host = host.split(":")[0]
+        try:
+            ip_str = socket.gethostbyname(host)
+        except OSError as e:
+            raise UnauthorizedTargetError(f"Cannot resolve target '{target}': {e}")
+
+        ip = ipaddress.ip_address(ip_str)
+        if not (ip.is_loopback or ip.is_private or ip.is_link_local):
+            raise UnauthorizedTargetError(
+                f"Target '{target}' resolves to {ip_str}, which is outside the "
+                f"authorized local-lab scope. Only loopback/private addresses may "
+                f"be scanned."
+            )
+        return ip_str
+
+    # ------------------------------------------------------------- port scan
+    def _probe_port(self, ip: str, port: int) -> Optional[PortInfo]:
+        """Real TCP connect to (ip, port). Returns PortInfo if open, else None."""
+        try:
+            with socket.create_connection((ip, port), timeout=self.scan_timeout) as sock:
+                banner = self._grab_banner(sock, port)
+        except (OSError, socket.timeout):
+            return None
+
+        service, version = self._identify(port, banner)
+        return PortInfo(port=port, service=service, version=version, banner=banner)
+
+    def _grab_banner(self, sock: socket.socket, port: int) -> Optional[str]:
+        """Read a real banner from an open socket."""
+        sock.settimeout(self.scan_timeout)
+        try:
+            if port in self.HTTP_PORTS:
+                sock.sendall(b"GET / HTTP/1.0\r\nHost: localhost\r\n\r\n")
+            data = sock.recv(512)
+            if not data:
+                return None
+            return data.decode("utf-8", errors="replace").strip() or None
+        except (OSError, socket.timeout):
+            return None
+
+    @staticmethod
+    def _identify(port: int, banner: Optional[str]) -> tuple:
+        """Derive (service, version) from the real banner where possible."""
+        service = ReconEngine.COMMON_PORTS.get(port, f"Unknown-{port}")
+        version = None
+        if not banner:
+            return service, None
+
+        first = banner.splitlines()[0] if banner else ""
+        # HTTP: prefer the Server header, fall back to the status line
+        if banner.startswith("HTTP/"):
+            service = "HTTP"
+            m = re.search(r"^Server:\s*(.+)$", banner, re.IGNORECASE | re.MULTILINE)
+            if m:
+                version = m.group(1).strip()
+            else:
+                m = re.search(r"^X-Powered-By:\s*(.+)$", banner, re.IGNORECASE | re.MULTILINE)
+                version = m.group(1).strip() if m else first.strip()
+        elif first.startswith("SSH-"):
+            service, version = "SSH", first.strip()
+        elif first.startswith("220") and "smtp" in banner.lower():
+            service, version = "SMTP", first.strip()
+        elif first.startswith("220"):
+            service, version = "FTP", first.strip()
+        else:
+            version = first.strip()[:120] or None
+        return service, version
 
     def scan_ports(
         self,
         target: str,
         ports: Optional[List[int]] = None,
-        scan_type: str = "syn"  # syn, connect, full
+        scan_type: str = "connect"
     ) -> Dict:
         """
-        Scan target for open ports.
-        
+        Scan target for open ports using real TCP connects (concurrent).
+
         Args:
-            target: Target hostname or IP
-            ports: List of ports to scan (default: common ports)
-            scan_type: Type of scan (syn, connect, full)
-            
+            target: Target hostname or IP (must be loopback/private)
+            ports: Ports to scan (default: COMMON_PORTS)
+            scan_type: Recorded in the result; only TCP connect is implemented.
+
         Returns:
-            Dictionary with open_ports and services
+            Dictionary with open_ports and services (actual findings only)
         """
+        ip = self.resolve_and_authorize(target)
         if ports is None:
-            ports = list(self.COMMON_PORTS.keys())
+            ports = sorted(self.COMMON_PORTS.keys())
 
-        open_ports = []
-        services = []
+        discovered: List[PortInfo] = []
+        with ThreadPoolExecutor(max_workers=min(self.max_workers, max(len(ports), 1))) as pool:
+            futures = {pool.submit(self._probe_port, ip, p): p for p in ports}
+            for fut in as_completed(futures):
+                info = fut.result()
+                if info is not None:
+                    discovered.append(info)
 
-        # Simulate port scanning (in real scenario, would use nmap or socket)
-        # For MVP, we simulate based on target characteristics
-        discovered_ports = self._simulate_port_scan(target, ports)
+        discovered.sort(key=lambda p: p.port)
 
-        for port_info in discovered_ports:
-            open_ports.append({
-                "port": port_info.port,
-                "service": port_info.service,
-                "state": "open",
-                "version": port_info.version,
-                "banner": port_info.banner
-            })
+        open_ports = [{
+            "port": p.port,
+            "service": p.service,
+            "state": "open",
+            "version": p.version,
+            "banner": p.banner,
+        } for p in discovered]
 
-            services.append({
-                "name": port_info.service,
-                "port": port_info.port,
-                "protocol": "tcp",
-                "version": port_info.version,
-                "vulnerabilities": []  # Will be populated by vulnerability scanner
-            })
+        services = [{
+            "name": p.service,
+            "port": p.port,
+            "protocol": "tcp",
+            "version": p.version,
+            "vulnerabilities": [],  # populated by the vulnerability scanner
+        } for p in discovered]
 
         return {
             "target": target,
+            "resolved_ip": ip,
             "scan_type": scan_type,
             "open_ports": open_ports,
             "services": services,
             "total_ports_scanned": len(ports),
-            "open_ports_count": len(open_ports)
+            "open_ports_count": len(open_ports),
         }
 
-    def _simulate_port_scan(self, target: str, ports: List[int]) -> List[PortInfo]:
-        """
-        Simulate port scanning.
-        In production, this would use actual socket connections or nmap.
-        For MVP, we simulate realistic results.
-        """
-        discovered = []
-
-        # Simulate discovery based on target (deterministic for same target)
-        # In real scenario, would actually connect to ports
-        target_hash = hash(target) % 1000
-
-        for port in ports:
-            # Simulate port being open with some probability
-            # Common ports more likely to be open
-            probability = 0.3 if port in [80, 443, 22, 21] else 0.1
-            
-            # Make it deterministic based on target
-            port_hash = hash(f"{target}:{port}") % 100
-            is_open = port_hash < (probability * 100)
-
-            if is_open:
-                service = self.COMMON_PORTS.get(port, f"Unknown-{port}")
-                banner = self.SERVICE_BANNERS.get(service)
-                
-                discovered.append(PortInfo(
-                    port=port,
-                    service=service,
-                    version=banner,
-                    banner=banner
-                ))
-
-        return discovered
-
+    # ------------------------------------------------------------- host scan
     def scan_host(self, target: str) -> Dict:
-        """
-        Perform full host scan (ports + OS detection).
-        
-        Args:
-            target: Target hostname or IP
-            
-        Returns:
-            Complete host information
-        """
-        # Port scan
+        """Perform a real host scan (ports + best-effort OS info)."""
         port_scan = self.scan_ports(target)
-
-        # OS detection (simulated)
-        os_info = self._detect_os(target)
-
+        os_info = self._detect_os(port_scan["resolved_ip"], port_scan["open_ports"])
         return {
             **port_scan,
             "os": os_info,
             "hostname": target,
-            "alive": True
+            "alive": port_scan["open_ports_count"] > 0,
         }
 
-    def _detect_os(self, target: str) -> Dict:
-        """Simulate OS detection"""
-        # In real scenario, would use nmap -O or similar
-        os_types = ["Linux", "Windows", "Unix"]
-        target_hash = hash(target) % len(os_types)
-        
-        return {
-            "type": os_types[target_hash],
-            "version": "Unknown",
-            "confidence": random.randint(70, 95)
-        }
+    @staticmethod
+    def _detect_os(ip: str, open_ports: List[Dict]) -> Dict:
+        """Best-effort OS info. Reports 'undetermined' rather than guessing."""
+        try:
+            is_local = ipaddress.ip_address(ip).is_loopback
+        except ValueError:
+            is_local = False
 
-    def get_exposed_endpoints(self, target: str, service: str) -> List[str]:
+        if is_local:
+            return {
+                "type": platform.system(),
+                "version": platform.release(),
+                "confidence": 100,
+                "method": "local platform inspection",
+            }
+
+        # Weak signal only: infer from observed service banners, else undetermined.
+        banners = " ".join((p.get("version") or "") for p in open_ports).lower()
+        if "win" in banners or "iis" in banners:
+            return {"type": "Windows", "version": "Unknown", "confidence": 40,
+                    "method": "banner heuristic"}
+        if any(k in banners for k in ("ubuntu", "debian", "centos", "nginx", "apache")):
+            return {"type": "Linux", "version": "Unknown", "confidence": 40,
+                    "method": "banner heuristic"}
+        return {"type": "undetermined", "version": "Unknown", "confidence": 0,
+                "method": "no OS fingerprinting performed"}
+
+    # --------------------------------------------------------- HTTP endpoints
+    def get_exposed_endpoints(self, target: str, service: str, port: Optional[int] = None) -> List[str]:
+        """Probe a real HTTP service for which candidate endpoints actually exist."""
+        ip = self.resolve_and_authorize(target)
+        if port is None:
+            port = 443 if service.upper() in ("HTTPS", "HTTPS-ALT") else 80
+
+        candidates = [
+            "/", "/api", "/admin", "/login", "/dashboard",
+            "/api/users", "/api/products", "/robots.txt", "/.env", "/health",
+        ]
+
+        found: List[str] = []
+
+        def check(path: str) -> Optional[str]:
+            try:
+                with socket.create_connection((ip, port), timeout=self.scan_timeout) as s:
+                    s.settimeout(self.scan_timeout)
+                    req = (f"GET {path} HTTP/1.0\r\nHost: {ip}\r\n"
+                           f"User-Agent: ART-AI-recon\r\n\r\n").encode()
+                    s.sendall(req)
+                    resp = s.recv(256).decode("utf-8", errors="replace")
+                m = re.match(r"HTTP/[\d.]+\s+(\d{3})", resp)
+                if not m:
+                    return None
+                code = int(m.group(1))
+                # Treat anything that is not 404/410 as present (incl. 401/403 redirects)
+                return path if code not in (404, 410) else None
+            except (OSError, socket.timeout):
+                return None
+
+        with ThreadPoolExecutor(max_workers=min(20, len(candidates))) as pool:
+            for res in pool.map(check, candidates):
+                if res:
+                    found.append(res)
+        return found
+
+    # -------------------------------------------------------- network sweep
+    def perform_network_scan(self, network: str, max_hosts: int = 256) -> Dict:
         """
-        Get exposed endpoints for a service.
-        Simulates directory/file discovery.
+        Sweep a private network range for live hosts (real TCP connects).
+
+        Only private/loopback ranges are permitted, and the range is capped at
+        ``max_hosts`` addresses to keep the sweep bounded.
         """
-        # Common endpoints by service
-        endpoints_by_service = {
-            "HTTP": [
-                "/",
-                "/api",
-                "/admin",
-                "/login",
-                "/dashboard",
-                "/api/users",
-                "/api/products"
-            ],
-            "HTTPS": [
-                "/",
-                "/api",
-                "/admin",
-                "/login"
-            ],
-            "FTP": [
-                "/",
-                "/pub",
-                "/uploads"
-            ]
-        }
+        try:
+            net = ipaddress.ip_network(network, strict=False)
+        except ValueError as e:
+            raise UnauthorizedTargetError(f"Invalid network '{network}': {e}")
 
-        endpoints = endpoints_by_service.get(service, ["/"])
-        
-        # Add some randomization
-        discovered = random.sample(endpoints, min(len(endpoints), random.randint(2, 5)))
-        
-        return discovered
+        if not (net.is_private or net.is_loopback):
+            raise UnauthorizedTargetError(
+                f"Network '{network}' is outside the authorized local-lab scope."
+            )
+        hosts = list(net.hosts())[:max_hosts] or [net.network_address]
 
-    def perform_network_scan(self, network: str) -> Dict:
-        """
-        Scan entire network range.
-        
-        Args:
-            network: Network CIDR (e.g., "192.168.1.0/24")
-            
-        Returns:
-            List of discovered hosts
-        """
-        # Simulate network scan
-        # In real scenario, would use nmap or similar
-        discovered_hosts = []
+        # Liveness = any of a few common ports accepting a connection.
+        probe_ports = [80, 443, 22, 3389, 3001, 3002, 3003, 8003]
 
-        # Simulate finding 2-5 hosts
-        num_hosts = random.randint(2, 5)
-        for i in range(num_hosts):
-            host = f"192.168.1.{random.randint(1, 254)}"
-            host_info = self.scan_host(host)
-            discovered_hosts.append(host_info)
+        def alive(ip_obj) -> Optional[str]:
+            ip = str(ip_obj)
+            for p in probe_ports:
+                try:
+                    with socket.create_connection((ip, p), timeout=0.3):
+                        return ip
+                except (OSError, socket.timeout):
+                    continue
+            return None
 
+        live: List[str] = []
+        with ThreadPoolExecutor(max_workers=self.max_workers) as pool:
+            for res in pool.map(alive, hosts):
+                if res:
+                    live.append(res)
+
+        discovered_hosts = [self.scan_host(ip) for ip in live]
         return {
             "network": network,
+            "addresses_probed": len(hosts),
             "discovered_hosts": discovered_hosts,
-            "total_hosts": len(discovered_hosts)
+            "total_hosts": len(discovered_hosts),
         }
-

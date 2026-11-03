@@ -1,0 +1,82 @@
+{
+  "timestamp_utc": "2026-09-27T18:32:09.762407+00:00",
+  "git_commit": "dc260469b97e26a1da9f6bbf2e4429ff23425480",
+  "seed": 12345,
+  "seeds": [
+    894684356,
+    1573429662,
+    21838115,
+    1761311799,
+    1772117479,
+    1724103796,
+    641324194,
+    1836395614,
+    791158068,
+    2000992393,
+    415884587,
+    580346374,
+    1215493283,
+    936793385,
+    347221958,
+    801148509,
+    266861099,
+    1877275097,
+    929723558,
+    560686511
+  ],
+  "config": {
+    "seed": 12345,
+    "n_runs": 20,
+    "n_train": 800,
+    "max_steps": 15,
+    "n_eval": 200,
+    "eval_every": 25,
+    "n_eval_snapshot": 100,
+    "win_threshold": 0.8,
+    "agent": {
+      "learning_rate": 0.2,
+      "discount": 0.95,
+      "epsilon": 0.3,
+      "epsilon_decay": 0.995,
+      "min_epsilon": 0.02,
+      "temperature": 0.5,
+      "use_double_q": true,
+      "use_replay": true,
+      "batch_size": 32,
+      "use_boltzmann": false,
+      "use_hint": false,
+      "hint_bias": 0.5
+    },
+    "ablations": {
+      "double_q_off": {
+        "use_double_q": false
+      },
+      "replay_off": {
+        "use_replay": false
+      },
+      "boltzmann_on": {
+        "use_boltzmann": true
+      },
+      "hint_on": {
+        "use_hint": true
+      }
+    }
+  },
+  "python": "3.14.6 (tags/v3.14.6:c63aec6, Jun 10 2026, 10:26:10) [MSC v.1944 64 bit (AMD64)]",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "grounded_foothold_probs": {
+    "0": 0.8100690303386946,
+    "1": 0.5358124782925867,
+    "2": 0.21558500910361916
+  },
+  "grounded_privesc_probs": {
+    "0": 0.12622218395576096,
+    "1": 0.3843345555130575,
+    "2": 0.5082509646121688
+  },
+  "hosts": [
+    "juice-shop",
+    "dvwa",
+    "flask-api"
+  ]
+}
