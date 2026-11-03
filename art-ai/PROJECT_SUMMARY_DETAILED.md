@@ -299,7 +299,7 @@ RL algorithm for autonomous hacking" it would not survive review.
 
 | check | status |
 |---|---|
-| Live test suite | **42 passed, 0 failed** |
+| Live test suite | **42 assertions passed, 0 failed, 0 skipped** (5 pytest test functions) |
 | Scope guard rejects off-allowlist before socket opens | ✅ (incl. own port 8003, IPv6) |
 | Every oracle has a positive AND negative case | ✅ 12 capabilities |
 | `rng` cannot influence a live verdict | ✅ asserted by test |
@@ -312,7 +312,8 @@ python -m experiments.run_all          # simulation, 20 seeds
 python -m experiments.run_live         # sim-to-real protocol
 python -m experiments.run_defender --strengths 4   # the routability result
 python -m experiments.eval_ml_models   # ML accuracy
-python -m live.tests.test_live         # 42 tests
+python -m live.tests.test_live         # 42 assertions, per-assertion tally
+pytest live/tests/ -q                  # same suite: 5 test functions
 ```
 
 ## Part 7 — Known limitations (state these before a reviewer finds them)
@@ -325,6 +326,10 @@ python -m live.tests.test_live         # 42 tests
 4. Live learner trained for only 100–120 episodes — undertrained for a ~150-state POMDP.
 5. Vulnerability scanning is unauthenticated only; three hosts therefore report zero.
 6. LLM chat endpoints are non-functional (no model connected, committed key invalid).
-7. Live API keys were committed to a tracked `.env` — must be rotated; recorded as a
-   process failure.
+7. A live Gemini API key was hardcoded in `backend/main.py` and committed (introduced in
+   `a0a62f5`, removed in `3b05a34`). Both commits are on `main`, so the key is readable in
+   public history and **must be revoked**, not merely rotated — removing it from `HEAD`
+   does not unpublish it. For the record: `.env` itself was **never** tracked (verified
+   with `git log --all -- .env`, which returns nothing); `.env.example` holds placeholders
+   only. Recorded as a process failure.
 8. Six hosts on one machine is not a network; no adaptive adversary.

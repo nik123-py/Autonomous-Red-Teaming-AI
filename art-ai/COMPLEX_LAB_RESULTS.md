@@ -137,4 +137,7 @@ python -m experiments.run_defender --strengths 4 --train 120 --eval 25 --max-ste
 
 Result JSON: `backend/experiments/results/live/defender-<run>.json`. The simulator and the
 deterministic live results are unaffected (defender defaults off); `python -m
-live.tests.test_live` is `42 passed, 0 failed`.
+live.tests.test_live` reports `42 assertions passed, 0 failed, 0 skipped (across 5 test
+functions)`. Note the two runners count differently: the standalone runner tallies
+individual assertions (42), while `pytest live/tests/ -q` collects the 5 test functions and
+reports `5 passed`. Both are green; they are not the same unit.

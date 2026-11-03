@@ -24,12 +24,49 @@ from live import http_client  # noqa: E402
 from live.capabilities import FOOTHOLD, HOST_NAMES, PRIVESC  # noqa: E402
 from live.http_client import LabSession, ScopeViolation, assert_in_scope  # noqa: E402
 
-PASS, FAIL = [], []
+PASS, FAIL, SKIP = [], [], []
+
+# This file is dual-runner on purpose.
+#
+#   python -m live.tests.test_live   -> runs every check, prints a per-assertion tally,
+#                                      exits non-zero if any assertion failed.
+#   pytest live/tests/               -> collects the 5 test functions; each fails on its
+#                                      first bad assertion, as pytest expects.
+#
+# _STRICT exists because check() used to only *record* a failure. Under pytest that made
+# all 5 functions pass unconditionally -- a false green that hid real failures. Under
+# pytest we now raise; standalone we keep collecting so one run reports everything.
+_STRICT = "pytest" in sys.modules
+_REQUIRE_LAB = "--require-lab" in sys.argv
 
 
 def check(name, cond, detail=""):
     (PASS if cond else FAIL).append(name)
     print(f"  {'PASS' if cond else 'FAIL'}  {name}" + (f"  -- {detail}" if detail else ""))
+    if not cond and _STRICT:
+        raise AssertionError(name + (f"  -- {detail}" if detail else ""))
+
+
+def require_lab(what):
+    """Skip (never FAIL) when the Docker lab is not running.
+
+    Oracle and defender checks drive real HTTP at the lab. With the lab down, recon
+    discovers no host, so exploit short-circuits with "not discovered" and the defender
+    gate is never reached -- which used to surface as a misleading FAIL ("blocked host
+    appears in observation") instead of an honest skip. A skip is NOT a pass: the
+    standalone summary counts skips separately and --require-lab makes them fatal.
+    """
+    from live.http_client import lab_is_up
+    if any(lab_is_up().values()):
+        return True
+    SKIP.append(what)
+    print(f"  SKIP  {what}  -- lab not running (docker compose up -d in lab/)")
+    if _REQUIRE_LAB:
+        raise AssertionError(what + " requires the lab, and --require-lab was passed")
+    if _STRICT:
+        import pytest
+        pytest.skip(what + " requires the local Docker lab")
+    return False
 
 
 # ------------------------------------------------------------------ scope tests
@@ -73,6 +110,8 @@ def test_scope():
 
 # ----------------------------------------------------------------- oracle tests
 def test_oracles():
+    if not require_lab("oracle positive and negative cases"):
+        return
     print("\n[oracles: positive cases -- real requests]")
     for h in HOST_NAMES:
         s = LabSession()
@@ -146,6 +185,8 @@ def test_interface_contract():
 # --------------------------------------------------------------- determinism
 def test_rng_does_not_decide():
     """Different seeds over the same action sequence must give the same verdicts."""
+    if not require_lab("rng-does-not-decide (needs real verdicts)"):
+        return
     print("\n[rng must not decide live outcomes]")
     seq = ["recon", "exploit", "exploit"]
     verdicts = []
@@ -176,6 +217,9 @@ def test_defender():
 
     # an always-blocking filter must make every exploit FAIL and never reach ADMIN
     # (this is the no-fabrication guarantee for the defender path)
+    if not require_lab("block-all defender episode"):
+        _defender_pure_checks(DefensePolicy)
+        return
     block_all = DefensePolicy(waf_block_p=1.0, seed=0)
     env_on = LiveAttackEnv(hosts=["flask-api"], defense=block_all)
     s = env_on.reset()
@@ -195,6 +239,11 @@ def test_defender():
     check("block-all defender never fabricates a win", not reached_admin)
     check("blocked host appears in observation", saw_block, state_key(s))
 
+    _defender_pure_checks(DefensePolicy)
+
+
+def _defender_pure_checks(DefensePolicy):
+    """Defender assertions needing no lab, so they run even when it is down."""
     # the probabilistic filter is reproducible under a fixed seed
     a = DefensePolicy(waf_block_p=0.5, seed=7)
     b = DefensePolicy(waf_block_p=0.5, seed=7)
@@ -209,7 +258,10 @@ if __name__ == "__main__":
     test_rng_does_not_decide()
     test_defender()
     test_oracles()
-    print(f"\n{len(PASS)} passed, {len(FAIL)} failed")
+    print(f"\n{len(PASS)} assertions passed, {len(FAIL)} failed, "
+          f"{len(SKIP)} skipped  (across 5 test functions)")
     if FAIL:
         print("FAILED:", FAIL)
+    if SKIP:
+        print("SKIPPED -- lab down, these are NOT passes:", SKIP)
     sys.exit(1 if FAIL else 0)

@@ -296,6 +296,45 @@ traffic passes through a single allow-listed choke point.}
 \label{fig:arch}
 \end{figure}
 
+\section{What is evaluated, and what is only a demonstrator}
+\label{sec:scope-of-claims}
+A reviewer should not have to guess which parts of this repository carry the
+results. The division is deliberate and is stated here once.
+
+\textbf{Everything measured in this thesis is produced by \code{backend/experiments/}}
+--- \code{mdp.py}, \code{grounding.py}, \code{value\_iteration.py},
+\code{agents.py}, \code{live\_env.py} and the \code{run\_*.py} drivers. Those
+modules compute $V^\star$, run the seeded training sweeps, drive the live lab
+through the choke point, and write the result JSON and evidence logs that every
+table and figure in Chapter~\ref{ch:results} is generated from. They are the
+research artifact, and they are the only thing the reproduction instructions in
+Appendix~\ref{app:reproduce} invoke.
+
+\textbf{The React dashboard and the FastAPI endpoints behind it are a
+demonstrator, not a contribution.} They exist to make the system legible in a
+live walkthrough: to show a scan returning evidence-backed findings, or an
+episode advancing step by step. They are explicitly \emph{out of scope} as an
+object of evaluation, and no number in this thesis is obtained by clicking
+through the UI. Two consequences follow, and are stated plainly rather than
+left for a reader to discover:
+\begin{itemize}
+  \item The interactive attack endpoints retain the original coarse
+    probability table. They were \emph{not} re-pointed at the
+    CVSS/EPSS-grounded model in \code{grounding.py}, nor at the live capability
+    oracles. The dashboard therefore cannot reproduce the reported results,
+    and is not expected to.
+  \item The LLM-backed chat endpoints are inert (no model is connected). This
+    is a demonstrator gap, not a gap in the evaluation, because no result
+    depends on them.
+\end{itemize}
+Wiring the dashboard to \code{grounding.py} and to the live oracles is a
+straightforward engineering task and is listed as future work
+(Section~\ref{sec:future}). It was left undone on purpose: the effort was spent
+on making the measured path correct and auditable instead, and a demonstrator
+that silently used different probabilities from the experiments would be a
+source of confusion in exactly the place where this work is trying to be
+precise.
+
 \section{The dual-environment design}
 The central architectural decision is that \code{AttackMDP} (simulated) and
 \code{LiveAttackEnv} (real) implement the same contract: the same state tuple,
@@ -993,23 +1032,39 @@ These constrain the conclusions and are stated plainly.
 
 %==============================================================================
 \chapter{Future Work}
+\label{sec:future}
 
 Ordered by expected contribution relative to effort.
 
 \section{Short term}
 \begin{enumerate}[leftmargin=*]
-  \item \textbf{Introduce genuine stochasticity.} Add rate limiting, lockouts,
-  randomised credentials, or a probabilistic WAF so that $p < 1$ and the MDP
-  stops being degenerate. This is the single change that would most strengthen
-  the RL claim, because it restores the uncertainty that learning exists to
-  handle.
+  \item \textbf{Introduce genuine stochasticity. \textup{(Done --- not yet
+  written up in this document.)}} A defender layer adding rate limiting,
+  lockouts and a probabilistic WAF was subsequently implemented
+  (\code{backend/live/defenses.py}) and measured across four strengths. It
+  restores the uncertainty that learning exists to handle, and under a
+  \emph{heterogeneous} filter --- where blocking probability differs per host,
+  so some hosts remain reachable --- the learned policy beats the greedy
+  baseline by $+0.68$ win rate at $N=25$ with disjoint Wilson intervals. Under
+  a \emph{uniform} filter it does not, because a uniform obstacle leaves
+  nothing to route around. Results and the negative cases are recorded in
+  \code{COMPLEX\_LAB\_RESULTS.md}; folding them into this document as a
+  results chapter is the main outstanding writing task.
   \item \textbf{Authenticated vulnerability scanning.} Reuse the existing
   session-establishing probes so DVWA, WebGoat and bWAPP are scanned behind
   login, removing the current false-negative class.
+  \item \textbf{Wire the demonstrator to the measured path.} Re-point the
+  interactive attack endpoints at \code{grounding.py} and the live capability
+  oracles, so the dashboard and the experiments share one probability model
+  (see Section~\ref{sec:scope-of-claims}). Until then the UI is a walkthrough
+  aid only and reproduces no reported number.
   \item \textbf{Raise live $N$ and report learning curves live.} At
   $N \geq 200$ the Wilson intervals tighten enough to separate zero-shot from
   fine-tuned, which $N = 30$ cannot.
-  \item \textbf{Rotate committed secrets and add a pre-commit secret scan.}
+  \item \textbf{Revoke the committed secret and add a pre-commit secret scan.}
+  A live Gemini key was hardcoded in \code{backend/main.py} and is present in
+  public git history; it must be \emph{revoked at the provider}, since rewriting
+  or rewording \code{HEAD} cannot unpublish it.
 \end{enumerate}
 
 \section{Medium term}
@@ -1082,6 +1137,7 @@ a claim requiring evidence.
 %==============================================================================
 \appendix
 \chapter{Reproducing the Results}
+\label{app:reproduce}
 
 \begin{lstlisting}[caption={Complete reproduction path.}]
 # --- simulation only; no Docker required -------------------------

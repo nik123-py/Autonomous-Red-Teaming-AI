@@ -20,3 +20,12 @@ sentence-transformers>=3.0.0
 torch_geometric>=2.6.0
 transformers>=4.40.0
 
+# pandas is a HARD dependency of the backend, not just the experiments harness:
+# decision_maker.py, exploit_data_processor.py, exploit_ml_models.py and
+# exploit_vector_store.py all import it at module scope, so `python main.py` fails
+# without it. (It was previously only in experiments/requirements-freeze.txt.)
+pandas>=2.0.0
+
+# Test runner for live/tests/. The suite also runs standalone via
+# `python -m live.tests.test_live`, which prints a per-assertion tally.
+pytest>=8.0.0

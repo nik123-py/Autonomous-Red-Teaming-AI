@@ -1021,7 +1021,7 @@ C.append(md(r"""
 | real HTTP requests per run | **2,126** (14.7 per episode, 224 s) |
 | oracle verdicts | 276 True, **0 fabricated** |
 | `rng` calls on the live decision path | **0** (mechanically verified) |
-| test suite | **42 passed, 0 failed** |
+| test suite | **42 assertions passed, 0 failed** (5 pytest test functions) |
 
 One evidence-log record — every escalation tied to the request that justified it:
 
@@ -1180,7 +1180,7 @@ python -m experiments.value_iteration    # V* = 0.6772
 python -m experiments.run_live                      # sim-to-real protocol
 python -m experiments.run_defender --strengths 4    # the routability result
 python -m experiments.eval_ml_models                # ML accuracy
-python -m live.tests.test_live                      # 42 tests
+python -m live.tests.test_live                      # 42 assertions (per-assertion tally)
 ```
 """))
 
